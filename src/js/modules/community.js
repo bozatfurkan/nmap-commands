@@ -1,74 +1,60 @@
 /**
- * Community Recipe Contribution & Voting Module (English)
+ * Community Recipe Sharing Module
  */
-
-const COMMUNITY_STORAGE_KEY = "nmap_community_recipes_v1";
 
 export class CommunityManager {
   constructor() {
-    this.recipes = this.loadCommunityRecipes();
+    this.storageKey = "nmap_community_recipes_v1";
+    this.recipes = this.loadRecipes();
   }
 
-  loadCommunityRecipes() {
+  loadRecipes() {
     try {
-      const data = localStorage.getItem(COMMUNITY_STORAGE_KEY);
-      if (data) return JSON.parse(data);
+      const data = localStorage.getItem(this.storageKey);
+      return data ? JSON.parse(data) : this.getDefaultRecipes();
     } catch (e) {
-      console.warn("Community storage load error:", e);
+      return this.getDefaultRecipes();
     }
-    // Return sample community submission recipes in English
+  }
+
+  getDefaultRecipes() {
     return [
       {
-        id: "comm-1",
-        title: "Bypass Cloudflare & Fast Port Discovery",
-        author: "CyberSecGuy99",
-        command: "nmap -sS -Pn --script=dns-brute -p 80,443 {target}",
-        upvotes: 42,
-        description: "Discovers direct IP origin behind Cloudflare WAF using DNS sub-domain brute-forcing.",
-        createdAt: "2026-07-28"
+        id: "rec_1",
+        title: "Full Infrastructure Vulnerability Audit",
+        author: "CyberAuditLab",
+        command: "nmap -sS -sV -O -p- -T4 --script=vuln 192.168.1.1",
+        description: "Executes complete TCP port sweep with OS fingerprinting and NSE vulnerability probes."
       },
       {
-        id: "comm-2",
-        title: "SCADA / Industrial Control System Safe Audit",
-        author: "ICS_Analyst",
-        command: "nmap -sS -p 102,502,44818 --script=s7-info,modbus-discover {target}",
-        upvotes: 28,
-        description: "Safely queries Modbus and Siemens S7 industrial automation PLCs without crashing devices.",
-        createdAt: "2026-07-29"
+        id: "rec_2",
+        title: "Firewall Bypass & Decoy Probe",
+        author: "RedTeamGhost",
+        command: "nmap -Pn -sS -f -D RND:10 --source-port 53 192.168.1.1",
+        description: "Packet fragmentation with 10 fake decoys and DNS source port spoofing to bypass simple firewalls."
       }
     ];
   }
 
-  saveCommunityRecipes() {
-    try {
-      localStorage.setItem(COMMUNITY_STORAGE_KEY, JSON.stringify(this.recipes));
-    } catch (e) {
-      console.error("Community storage save error:", e);
-    }
-  }
-
   addRecipe(title, author, command, description) {
     const newRecipe = {
-      id: "comm-" + Date.now(),
+      id: `rec_${Date.now()}`,
       title: title.trim(),
-      author: author.trim() || "Anonymous Researcher",
+      author: author.trim() || "Anonymous",
       command: command.trim(),
-      upvotes: 1,
-      description: description.trim(),
-      createdAt: new Date().toISOString().slice(0, 10)
+      description: description.trim()
     };
+
     this.recipes.unshift(newRecipe);
-    this.saveCommunityRecipes();
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.recipes));
+    } catch (e) {
+      console.error("Error saving community recipe", e);
+    }
     return newRecipe;
   }
 
-  upvoteRecipe(id) {
-    const recipe = this.recipes.find(r => r.id === id);
-    if (recipe) {
-      recipe.upvotes += 1;
-      this.saveCommunityRecipes();
-      return recipe.upvotes;
-    }
-    return 0;
+  getRecipes() {
+    return this.recipes;
   }
 }

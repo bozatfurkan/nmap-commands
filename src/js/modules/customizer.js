@@ -1,5 +1,5 @@
 /**
- * Dynamic IP & Port Customizer & Command String Builder
+ * Dynamic Target IP, Port, Timing Template, and Flag Toggle Customizer
  */
 
 export class CommandCustomizer {
@@ -7,7 +7,7 @@ export class CommandCustomizer {
     this.target = "192.168.1.1";
     this.ports = "";
     this.timing = "-T4";
-    this.customFlags = {
+    this.flags = {
       pn: false,
       sv: false,
       o: false,
@@ -16,8 +16,8 @@ export class CommandCustomizer {
     };
   }
 
-  setTarget(targetStr) {
-    this.target = targetStr.trim() || "192.168.1.1";
+  setTarget(ipStr) {
+    this.target = ipStr.trim() || "192.168.1.1";
   }
 
   setPorts(portsStr) {
@@ -25,45 +25,45 @@ export class CommandCustomizer {
   }
 
   setTiming(timingStr) {
-    this.timing = timingStr || "-T4";
+    this.timing = timingStr.trim();
   }
 
-  toggleFlag(flagKey, value) {
-    if (this.customFlags.hasOwnProperty(flagKey)) {
-      this.customFlags[flagKey] = Boolean(value);
+  toggleFlag(flagKey, isChecked) {
+    if (flagKey in this.flags) {
+      this.flags[flagKey] = Boolean(isChecked);
     }
   }
 
-  /**
-   * Build live customized command string from pattern and state
-   */
-  buildCustomCommand(cmdObject) {
-    let rawPattern = cmdObject.commandPattern;
+  buildCustomCommand(cmdObj) {
+    if (!cmdObj || !cmdObj.commandPattern) return "";
 
-    // Build ports parameter
-    let portFlag = "";
+    let pattern = cmdObj.commandPattern;
+
+    // Replace target
+    pattern = pattern.replace("{target}", this.target);
+
+    // Replace timing
+    pattern = pattern.replace("{timing}", this.timing);
+
+    // Replace ports
+    let portSegment = "";
     if (this.ports) {
-      portFlag = `-p ${this.ports}`;
+      portSegment = `-p ${this.ports}`;
     }
+    pattern = pattern.replace("{ports}", portSegment);
 
-    // Build additional toggled flags
-    const activeFlags = [];
-    if (this.customFlags.pn && !rawPattern.includes("-Pn")) activeFlags.push("-Pn");
-    if (this.customFlags.sv && !rawPattern.includes("-sV")) activeFlags.push("-sV");
-    if (this.customFlags.o && !rawPattern.includes("-O")) activeFlags.push("-O");
-    if (this.customFlags.a && !rawPattern.includes("-A")) activeFlags.push("-A");
-    if (this.customFlags.verbose && !rawPattern.includes("-v")) activeFlags.push("-v");
+    // Build extra flags segment
+    const extraFlags = [];
+    if (this.flags.pn && !pattern.includes("-Pn")) extraFlags.push("-Pn");
+    if (this.flags.sv && !pattern.includes("-sV")) extraFlags.push("-sV");
+    if (this.flags.o && !pattern.includes("-O")) extraFlags.push("-O");
+    if (this.flags.a && !pattern.includes("-A")) extraFlags.push("-A");
+    if (this.flags.verbose && !pattern.includes("-v")) extraFlags.push("-v");
 
-    const additionalFlagsStr = activeFlags.join(" ");
+    const flagsSegment = extraFlags.join(" ");
+    pattern = pattern.replace("{flags}", flagsSegment);
 
-    // Replace placeholders
-    let result = rawPattern
-      .replace("{timing}", this.timing)
-      .replace("{ports}", portFlag)
-      .replace("{flags}", additionalFlagsStr)
-      .replace("{target}", this.target);
-
-    // Clean up multiple spaces
-    return result.replace(/\s+/g, " ").trim();
+    // Clean double spaces
+    return pattern.replace(/\s+/g, " ").trim();
   }
 }

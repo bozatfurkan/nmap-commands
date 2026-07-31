@@ -1,6 +1,6 @@
 /**
  * Nmap Intelligence Search & Interactive Command Builder
- * Main Application Orchestrator (English Interface)
+ * Main Application Orchestrator
  */
 
 import { NMAP_COMMANDS } from './data/nmapCommands.js';
@@ -20,7 +20,7 @@ import { CommunityManager } from './modules/community.js';
 import { runPingSimulation } from './modules/pingCheck.js';
 import { RecentSearchManager } from './modules/recentSearches.js';
 
-// Instances
+// Application Instances
 const customizer = new CommandCustomizer();
 const favoritesMgr = new FavoritesManager();
 const wizard = new ScenarioWizard();
@@ -31,33 +31,18 @@ const recentSearchMgr = new RecentSearchManager();
 let currentCategory = "all";
 let currentQuery = "";
 let selectedSimulatorCmd = null;
-let currentLang = localStorage.getItem("nmap_app_lang") || "en";
+let currentLang = localStorage.getItem("nmap_app_lang") || "tr";
 let currentTheme = localStorage.getItem("nmap_app_theme") || "dark";
 
 // DOM Elements
-const searchInput = document.getElementById("searchInput");
-const btnClearSearch = document.getElementById("btnClearSearch");
-const commandCardsGrid = document.getElementById("commandCardsGrid");
-const resultsCount = document.getElementById("resultsCount");
-const countAll = document.getElementById("countAll");
-const countFavorites = document.getElementById("countFavorites");
+let searchInput, btnClearSearch, commandCardsGrid, resultsCount;
 
-const inputTargetIp = document.getElementById("inputTargetIp");
-const inputPorts = document.getElementById("inputPorts");
-const selectTiming = document.getElementById("selectTiming");
-
-const chkPn = document.getElementById("chkPn");
-const chkSv = document.getElementById("chkSv");
-const chkO = document.getElementById("chkO");
-const chkA = document.getElementById("chkA");
-const chkV = document.getElementById("chkV");
-
-// Initialize App
 document.addEventListener("DOMContentLoaded", () => {
+  initDOM();
   setupThemeSwitcher();
   setupLanguageSwitcher();
   setupNavigationTabs();
-  setupCustomizerEvents();
+  setupCustomizerControls();
   setupSearchEvents();
   setupCategoryFilters();
   setupSimulatorModal();
@@ -68,12 +53,17 @@ document.addEventListener("DOMContentLoaded", () => {
   setupBibliography();
   setupExportButtons();
   setupModals();
-  setupCommunity();
+  setupCommunityModal();
 
-  // Initial Render
-  updateCategoryCounts();
   renderCommands();
 });
+
+function initDOM() {
+  searchInput = document.getElementById("searchInput");
+  btnClearSearch = document.getElementById("btnClearSearch");
+  commandCardsGrid = document.getElementById("commandCardsGrid");
+  resultsCount = document.getElementById("resultsCount");
+}
 
 /* ==================== THEME SWITCHER ==================== */
 function setupThemeSwitcher() {
@@ -82,14 +72,14 @@ function setupThemeSwitcher() {
   const themeLabel = document.getElementById("themeLabel");
 
   const applyTheme = () => {
-    if (currentTheme === "dark") {
-      document.documentElement.classList.add("dark");
-      if (themeIcon) themeIcon.className = "fa-solid fa-moon text-xs text-amber-400";
-      if (themeLabel) themeLabel.textContent = "Dark";
-    } else {
+    if (currentTheme === "light") {
       document.documentElement.classList.remove("dark");
-      if (themeIcon) themeIcon.className = "fa-solid fa-sun text-xs text-amber-500";
+      if (themeIcon) themeIcon.className = "fa-solid fa-sun text-amber-500";
       if (themeLabel) themeLabel.textContent = "Light";
+    } else {
+      document.documentElement.classList.add("dark");
+      if (themeIcon) themeIcon.className = "fa-solid fa-moon text-amber-400";
+      if (themeLabel) themeLabel.textContent = "Dark";
     }
   };
 
@@ -102,14 +92,15 @@ function setupThemeSwitcher() {
   applyTheme();
 }
 
-/* ==================== LANGUAGE SWITCHER ==================== */
+/* ==================== 10-LANGUAGES SWITCHER ==================== */
 function setupLanguageSwitcher() {
-  const btnLangToggle = document.getElementById("btnLangToggle");
-  const langLabel = document.getElementById("langLabel");
+  const selectLang = document.getElementById("selectLang");
+  if (!selectLang) return;
+
+  selectLang.value = currentLang;
 
   const updateLangUI = () => {
-    if (langLabel) langLabel.textContent = currentLang === "en" ? "EN 🇬🇧" : "TR 🇹🇷";
-    const dict = I18N_DICTIONARY[currentLang];
+    const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
     
     if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
     
@@ -119,11 +110,50 @@ function setupLanguageSwitcher() {
     const discBtn = document.getElementById("textBtnDisclaimer");
     if (discBtn) discBtn.textContent = dict.btnDisclaimer;
 
+    // Update Navigation Tabs
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+      const tabName = tab.dataset.tab;
+      if (tabName === "search") tab.innerHTML = `<i class="fa-solid fa-magnifying-glass text-cyan-400"></i> ${dict.navSearch}`;
+      else if (tabName === "wizard") tab.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> ${dict.navWizard}`;
+      else if (tabName === "comparator") tab.innerHTML = `<i class="fa-solid fa-code-compare text-purple-400"></i> ${dict.navComparator}`;
+      else if (tabName === "cheatsheet") tab.innerHTML = `<i class="fa-solid fa-table-list text-emerald-400"></i> ${dict.navCheatSheet}`;
+      else if (tabName === "timing") tab.innerHTML = `<i class="fa-solid fa-gauge-high text-rose-400"></i> ${dict.navTiming}`;
+    });
+
+    // Update Hero text
+    const heroDesc = document.getElementById("textHeroDesc");
+    if (heroDesc) heroDesc.textContent = dict.heroDesc;
+
+    // Update Customizer labels
+    const customizerTitle = document.getElementById("textCustomizerTitle");
+    if (customizerTitle) customizerTitle.textContent = dict.customizerTitle;
+
+    const customizerSub = document.getElementById("textCustomizerSub");
+    if (customizerSub) customizerSub.textContent = dict.customizerSub;
+
+    // Update Category Pills Text
+    document.querySelectorAll(".cat-pill").forEach(pill => {
+      const cat = pill.dataset.cat;
+      if (cat === "all") pill.innerHTML = `${dict.catAll} (<span id="countAll">${NMAP_COMMANDS.length}</span>)`;
+      else if (cat === "discovery") pill.innerHTML = `🔍 ${dict.catDiscovery}`;
+      else if (cat === "port_scan") pill.innerHTML = `🔌 ${dict.catPortScan}`;
+      else if (cat === "service_os") pill.innerHTML = `🛠️ ${dict.catServiceOs}`;
+      else if (cat === "vuln_scripts") pill.innerHTML = `🛡️ ${dict.catVulnScripts}`;
+      else if (cat === "evasion") pill.innerHTML = `🥷 ${dict.catEvasion}`;
+      else if (cat === "favorites") pill.innerHTML = `⭐ ${dict.catFavorites} (<span id="countFavorites">${favoritesMgr.getFavoriteIds().length}</span>)`;
+    });
+
+    // Re-render components across all tabs
     renderCommands();
+    setupWizard();
+    setupComparator();
+    setupCheatSheet();
+    setupTimingGuide();
+    setupBibliography();
   };
 
-  btnLangToggle?.addEventListener("click", () => {
-    currentLang = currentLang === "en" ? "tr" : "en";
+  selectLang.addEventListener("change", (e) => {
+    currentLang = e.target.value;
     localStorage.setItem("nmap_app_lang", currentLang);
     updateLangUI();
   });
@@ -151,15 +181,21 @@ function setupNavigationTabs() {
       });
     });
   });
-
-  document.getElementById("brandLogo")?.addEventListener("click", () => {
-    document.querySelector('[data-tab="search"]')?.click();
-  });
 }
 
-/* ==================== CUSTOMIZER EVENTS ==================== */
-function setupCustomizerEvents() {
-  inputTargetIp?.addEventListener("input", (e) => {
+/* ==================== CUSTOMIZER CONTROLS ==================== */
+function setupCustomizerControls() {
+  const inputIp = document.getElementById("inputTargetIp");
+  const inputPorts = document.getElementById("inputPorts");
+  const selectTiming = document.getElementById("selectTiming");
+
+  const chkPn = document.getElementById("chkPn");
+  const chkSv = document.getElementById("chkSv");
+  const chkO = document.getElementById("chkO");
+  const chkA = document.getElementById("chkA");
+  const chkV = document.getElementById("chkV");
+
+  inputIp?.addEventListener("input", (e) => {
     customizer.setTarget(e.target.value);
     renderCommands();
   });
@@ -274,22 +310,29 @@ function renderRecentSearches() {
 /* ==================== CATEGORY FILTERS ==================== */
 function setupCategoryFilters() {
   const pills = document.querySelectorAll(".cat-pill");
+
   pills.forEach(pill => {
     pill.addEventListener("click", () => {
       pills.forEach(p => {
         p.classList.remove("active", "bg-cyan-500/10", "text-cyan-400", "border-cyan-500/30");
-        p.classList.add("bg-slate-900", "text-slate-400");
+        p.classList.add("bg-slate-900", "text-slate-400", "border-slate-800");
       });
+
+      pill.classList.remove("bg-slate-900", "text-slate-400", "border-slate-800");
       pill.classList.add("active", "bg-cyan-500/10", "text-cyan-400", "border-cyan-500/30");
-      pill.classList.remove("bg-slate-900", "text-slate-400");
 
       currentCategory = pill.dataset.cat;
       renderCommands();
     });
   });
+
+  updateCategoryCounts();
 }
 
 function updateCategoryCounts() {
+  const countAll = document.getElementById("countAll");
+  const countFavorites = document.getElementById("countFavorites");
+
   if (countAll) countAll.textContent = NMAP_COMMANDS.length;
   if (countFavorites) countFavorites.textContent = favoritesMgr.getFavoriteIds().length;
 }
@@ -310,14 +353,14 @@ function renderCommands() {
   }
 
   // Update Count
-  resultsCount.textContent = searchResults.length;
+  if (resultsCount) resultsCount.textContent = searchResults.length;
 
   if (searchResults.length === 0) {
     commandCardsGrid.innerHTML = `
       <div class="col-span-full py-12 text-center bg-slate-900/40 rounded-2xl border border-slate-800 space-y-3">
         <i class="fa-solid fa-ghost text-4xl text-slate-600"></i>
-        <h3 class="font-bold text-slate-300">No Matching Commands Found</h3>
-        <p class="text-xs text-slate-500">Try modifying your search term or click one of the quick tags above.</p>
+        <h3 class="font-bold text-slate-300">Eşleşen Komut Bulunamadı</h3>
+        <p class="text-xs text-slate-500">Arama terimini değiştirebilir veya yukarıdaki hızlı arama etiketlerini deneyebilirsiniz.</p>
       </div>
     `;
     return;
@@ -337,7 +380,7 @@ function renderCommands() {
               ${getCategoryLabel(command.category)}
             </span>
             
-            <button class="btn-fav hover:scale-110 transition text-amber-400 text-sm" data-id="${command.id}" title="Bookmark Command">
+            <button class="btn-fav hover:scale-110 transition text-amber-400 text-sm" data-id="${command.id}" title="Favorilere Ekle">
               <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-star"></i>
             </button>
           </div>
@@ -349,7 +392,7 @@ function renderCommands() {
         <!-- Live Code Block with Quick Copy -->
         <div class="cmd-code-block p-3 text-xs font-mono text-emerald-400 break-all flex items-center justify-between gap-2">
           <span class="select-all">${escapeHtml(liveCmdStr)}</span>
-          <button class="btn-copy-cmd p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition shrink-0" data-cmd="${escapeHtml(liveCmdStr)}" title="Copy to Clipboard">
+          <button class="btn-copy-cmd p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition shrink-0" data-cmd="${escapeHtml(liveCmdStr)}" title="Kopyala">
             <i class="fa-solid fa-copy"></i>
           </button>
         </div>
@@ -359,7 +402,7 @@ function renderCommands() {
           <span class="text-[11px] text-slate-500 font-mono">Risk: ${escapeHtml(command.riskLevel)}</span>
 
           <button class="btn-open-sim px-3.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition" data-id="${command.id}">
-            <i class="fa-solid fa-terminal"></i> Details & Simulator
+            <i class="fa-solid fa-terminal"></i> Detay & Simülatör
           </button>
         </div>
 
@@ -371,7 +414,6 @@ function renderCommands() {
 }
 
 function attachCardEvents() {
-  // Favorite buttons
   document.querySelectorAll(".btn-fav").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -382,7 +424,6 @@ function attachCardEvents() {
     });
   });
 
-  // Copy buttons
   document.querySelectorAll(".btn-copy-cmd").forEach(btn => {
     btn.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -395,7 +436,6 @@ function attachCardEvents() {
     });
   });
 
-  // Open Simulator Modal
   document.querySelectorAll(".btn-open-sim").forEach(btn => {
     btn.addEventListener("click", () => {
       const cmdId = btn.dataset.id;
@@ -418,9 +458,9 @@ function setupSimulatorModal() {
     const cmdStr = document.getElementById("simModalCmdStr").textContent;
     navigator.clipboard.writeText(cmdStr);
     const btn = document.getElementById("btnCopySimCmd");
-    btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied`;
+    btn.innerHTML = `<i class="fa-solid fa-check"></i> Kopyalandı`;
     setTimeout(() => {
-      btn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy`;
+      btn.innerHTML = `<i class="fa-solid fa-copy"></i> Kopyala`;
     }, 2000);
   });
 }
@@ -455,7 +495,7 @@ function setupWizard() {
 
   const updateWizardUI = () => {
     const step = wizard.currentStep;
-    stepLabel.textContent = `Step ${step} / 4: ${getWizardStepTitle(step)}`;
+    stepLabel.textContent = `Adım ${step} / 4: ${getWizardStepTitle(step)}`;
     percentLabel.textContent = `${step * 25}%`;
     progressBar.style.width = `${step * 25}%`;
 
@@ -465,13 +505,12 @@ function setupWizard() {
     });
 
     btnPrev.disabled = (step === 1);
-    btnNext.innerHTML = (step === 4) ? `Complete <i class="fa-solid fa-check ml-1"></i>` : `Next <i class="fa-solid fa-arrow-right ml-1"></i>`;
+    btnNext.innerHTML = (step === 4) ? `Tamamla <i class="fa-solid fa-check ml-1"></i>` : `İleri <i class="fa-solid fa-arrow-right ml-1"></i>`;
 
     if (step === 4) {
       const generatedCmd = wizard.generateWizardCommand(customizer.target);
       document.getElementById("wizResultCmd").textContent = generatedCmd;
 
-      // Mock output render in wizard
       const mockObj = {
         commandPattern: generatedCmd,
         mockOutput: `Starting Nmap 7.94 ( https://nmap.org )\nNmap scan report for ${customizer.target}\nHost is up (0.012s latency).\nPORT   STATE SERVICE\n80/tcp open  http\n443/tcp open https\nNmap done: 1 IP address scanned.`
@@ -481,7 +520,6 @@ function setupWizard() {
   };
 
   btnNext?.addEventListener("click", () => {
-    // Collect choices
     if (wizard.currentStep === 1) {
       const objChoice = document.querySelector('input[name="wizObj"]:checked')?.value;
       if (objChoice) wizard.setAnswer("objective", objChoice);
@@ -497,7 +535,6 @@ function setupWizard() {
       wizard.setStep(wizard.currentStep + 1);
       updateWizardUI();
     } else {
-      // Finished
       document.querySelector('[data-tab="search"]')?.click();
     }
   });
@@ -513,19 +550,19 @@ function setupWizard() {
     const cmdText = document.getElementById("wizResultCmd").textContent;
     navigator.clipboard.writeText(cmdText);
     const btn = document.getElementById("btnWizCopy");
-    btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied`;
+    btn.innerHTML = `<i class="fa-solid fa-check"></i> Kopyalandı`;
     setTimeout(() => {
-      btn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy`;
+      btn.innerHTML = `<i class="fa-solid fa-copy"></i> Kopyala`;
     }, 2000);
   });
 }
 
 function getWizardStepTitle(step) {
   switch (step) {
-    case 1: return "Scanning Objective";
-    case 2: return "Timing & Speed";
-    case 3: return "Port Scope";
-    case 4: return "Generated Command & Demo";
+    case 1: return "Tarama Amacı";
+    case 2: return "Zamanlama & Hız";
+    case 3: return "Port Kapsamı";
+    case 4: return "Oluşturulan Komut & Demo";
     default: return "";
   }
 }
@@ -538,12 +575,14 @@ function setupComparator() {
 
   if (!selectCmdA || !selectCmdB) return;
 
+  const valA = selectCmdA.value || (NMAP_COMMANDS[0] ? NMAP_COMMANDS[0].id : "");
+  const valB = selectCmdB.value || (NMAP_COMMANDS[1] ? NMAP_COMMANDS[1].id : "");
+
   selectCmdA.innerHTML = NMAP_COMMANDS.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
   selectCmdB.innerHTML = NMAP_COMMANDS.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
 
-  if (NMAP_COMMANDS.length >= 2) {
-    selectCmdB.selectedIndex = 1;
-  }
+  if (valA) selectCmdA.value = valA;
+  if (valB) selectCmdB.value = valB;
 
   const updateComparison = () => {
     const cmd1 = NMAP_COMMANDS.find(c => c.id === selectCmdA.value);
@@ -551,8 +590,8 @@ function setupComparator() {
     renderCommandComparison(resultArea, cmd1, cmd2);
   };
 
-  selectCmdA.addEventListener("change", updateComparison);
-  selectCmdB.addEventListener("change", updateComparison);
+  selectCmdA.onchange = updateComparison;
+  selectCmdB.onchange = updateComparison;
 
   updateComparison();
 }
@@ -596,8 +635,8 @@ function setupTimingGuide() {
       </div>
 
       <div class="pt-2 text-xs space-y-1">
-        <div class="text-emerald-400"><strong>Pros:</strong> ${escapeHtml(t.pros)}</div>
-        <div class="text-rose-400"><strong>Cons:</strong> ${escapeHtml(t.cons)}</div>
+        <div class="text-emerald-400"><strong>Avantajlar:</strong> ${escapeHtml(t.pros)}</div>
+        <div class="text-rose-400"><strong>Dezavantajlar:</strong> ${escapeHtml(t.cons)}</div>
       </div>
     </div>
   `).join('');
@@ -608,8 +647,8 @@ function getTimingBadgeClass(color) {
     case "emerald": return "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
     case "teal": return "bg-teal-500/10 text-teal-400 border border-teal-500/20";
     case "cyan": return "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20";
-    case "blue": return "bg-blue-500/10 text-blue-400 border border-blue-500/20";
     case "amber": return "bg-amber-500/10 text-amber-400 border border-amber-500/20";
+    case "purple": return "bg-purple-500/10 text-purple-400 border border-purple-500/20";
     case "rose": return "bg-rose-500/10 text-rose-400 border border-rose-500/20";
     default: return "bg-slate-800 text-slate-300";
   }
@@ -620,22 +659,16 @@ function setupBibliography() {
   const container = document.getElementById("bibliographyContainer");
   if (!container) return;
 
-  container.innerHTML = BIBLIOGRAPHY_DATA.map(b => `
-    <div class="p-3.5 bg-slate-950/60 rounded-xl border border-slate-800/80 flex flex-col justify-between space-y-2">
-      <div>
-        <div class="flex items-center justify-between gap-2">
-          <span class="font-bold text-slate-200 text-sm">${escapeHtml(b.title)}</span>
-          <span class="px-2 py-0.5 bg-slate-800 text-slate-400 text-[10px] rounded font-medium">${escapeHtml(b.type)}</span>
-        </div>
-        <p class="text-slate-400 text-xs mt-1">${escapeHtml(b.description)}</p>
-      </div>
-
-      <div class="flex items-center justify-between text-[11px] pt-1">
-        <span class="text-slate-500">Author: ${escapeHtml(b.author)}</span>
-        <a href="${b.url}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline flex items-center gap-1 font-mono">
-          Doc Link <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+  container.innerHTML = BIBLIOGRAPHY_DATA.map(item => `
+    <div class="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 space-y-2">
+      <div class="flex items-start justify-between gap-2">
+        <h4 class="font-bold text-slate-200 text-xs">${escapeHtml(item.title)}</h4>
+        <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded text-[10px] font-mono shrink-0 transition">
+          Doküman <i class="fa-solid fa-external-link ml-0.5"></i>
         </a>
       </div>
+      <p class="text-[11px] text-slate-400">${escapeHtml(item.description)}</p>
+      <div class="text-[10px] text-slate-500 font-mono">Yazar: ${escapeHtml(item.author)} (${item.year})</div>
     </div>
   `).join('');
 }
@@ -690,42 +723,43 @@ function openPingCheckModal() {
   runPingSimulation(targetIpStr, container, badge, rec, currentLang);
 }
 
-/* ==================== COMMUNITY RECIPES ==================== */
-function setupCommunity() {
-  const modalCommunity = document.getElementById("modalCommunity");
-  const formCommunity = document.getElementById("formCommunity");
+/* ==================== COMMUNITY MODAL ==================== */
+function setupCommunityModal() {
+  const modal = document.getElementById("modalCommunity");
+  const form = document.getElementById("formCommunity");
 
   document.getElementById("btnCommunityModal")?.addEventListener("click", () => {
     renderCommunityRecipes();
-    modalCommunity?.classList.remove("hidden");
-  });
-  document.getElementById("btnCloseCommunity")?.addEventListener("click", () => {
-    modalCommunity?.classList.add("hidden");
+    modal?.classList.remove("hidden");
   });
 
-  formCommunity?.addEventListener("submit", (e) => {
+  document.getElementById("btnCloseCommunity")?.addEventListener("click", () => {
+    modal?.classList.add("hidden");
+  });
+
+  form?.addEventListener("submit", (e) => {
     e.preventDefault();
     const title = document.getElementById("commTitle").value;
     const author = document.getElementById("commAuthor").value;
-    const command = document.getElementById("commCommand").value;
+    const cmd = document.getElementById("commCommand").value;
     const desc = document.getElementById("commDesc").value;
 
-    communityMgr.addRecipe(title, author, command, desc);
-    formCommunity.reset();
+    communityMgr.addRecipe(title, author, cmd, desc);
+    form.reset();
     renderCommunityRecipes();
   });
 }
 
 function renderCommunityRecipes() {
-  const container = document.getElementById("communityRecipesContainer");
-  if (!container) return;
+  const list = document.getElementById("communityRecipesList");
+  if (!list) return;
 
-  const recipes = communityMgr.recipes;
-  container.innerHTML = recipes.map(r => `
-    <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1.5 text-xs">
-      <div class="flex items-center justify-between">
+  const recipes = communityMgr.getRecipes();
+  list.innerHTML = recipes.map(r => `
+    <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
+      <div class="flex items-center justify-between text-xs">
         <span class="font-bold text-cyan-400">${escapeHtml(r.title)}</span>
-        <span class="text-slate-500 font-mono text-[10px]">By: ${escapeHtml(r.author)}</span>
+        <span class="text-slate-500 font-mono">Rumuz: ${escapeHtml(r.author)}</span>
       </div>
       <code class="block font-mono text-emerald-400 bg-slate-900 p-1.5 rounded text-[11px] break-all">${escapeHtml(r.command)}</code>
       <p class="text-slate-400 text-[11px]">${escapeHtml(r.description)}</p>
@@ -735,14 +769,15 @@ function renderCommunityRecipes() {
 
 /* ==================== HELPER FUNCTIONS ==================== */
 function getCategoryLabel(cat) {
+  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
   switch (cat) {
-    case "discovery": return "Host Discovery";
-    case "port_scan": return "Port Scanning";
-    case "service_os": return "Service & OS";
-    case "vuln_scripts": return "Vulnerability (NSE)";
-    case "evasion": return "Firewall Evasion";
-    case "advanced": return "Aggressive / Advanced";
-    default: return "General";
+    case "discovery": return dict.catDiscovery;
+    case "port_scan": return dict.catPortScan;
+    case "service_os": return dict.catServiceOs;
+    case "vuln_scripts": return dict.catVulnScripts;
+    case "evasion": return dict.catEvasion;
+    case "advanced": return dict.catAll;
+    default: return cat;
   }
 }
 

@@ -1,41 +1,42 @@
 /**
- * Official Bibliography and Documentation References (English)
+ * Official Bibliography and Technical References Database
  */
 
 export const BIBLIOGRAPHY_DATA = [
   {
-    title: "Nmap Network Scanning - Official Book",
+    id: "bib-1",
+    title: "Nmap Network Scanning: The Official Nmap Project Guide to Network Discovery and Security Scanning",
     author: "Gordon 'Fyodor' Lyon",
-    type: "Official Book",
+    year: "2009",
+    publisher: "Insecure.org Press",
     url: "https://nmap.org/book/",
-    description: "The authoritative guide to network discovery and security auditing written by Nmap creator Fyodor."
+    description: "The authoritative official reference book covering Nmap core architecture, TCP/IP fingerprinting, NSE scripting engine, and firewall evasion tactics."
   },
   {
-    title: "Nmap Reference Guide Documentation",
-    author: "Nmap.org Project",
-    type: "Technical Reference",
-    url: "https://nmap.org/docs.html",
-    description: "Official manual pages documenting Nmap command line switches, flags, and NSE script categories."
+    id: "bib-2",
+    title: "Nmap Scripting Engine (NSE) Documentation & Library API Reference",
+    author: "Nmap Development Team",
+    year: "2024",
+    publisher: "Nmap.org",
+    url: "https://nmap.org/nsedoc/",
+    description: "Official documentation detailing NSE Lua categories (vuln, discovery, safe, exploit), script lifecycle, and socket API specifications."
   },
   {
-    title: "OWASP Web Security Testing Guide (WSTG)",
+    id: "bib-3",
+    title: "OWASP Web Security Testing Guide (WSTG) - Network Infrastructure Discovery",
     author: "OWASP Foundation",
-    type: "Security Standard",
+    year: "2023",
+    publisher: "OWASP Project",
     url: "https://owasp.org/www-project-web-security-testing-guide/",
-    description: "Global standard methodology for web application reconnaissance and network security testing."
+    description: "Industry standard web security testing framework detailing port discovery, service enumeration, and SSL/TLS cipher audit methodologies."
   },
   {
-    title: "SANS Institute - Nmap Field Cheat Sheet",
-    author: "SANS Penetration Testing",
-    type: "Cheat Sheet & Field Guide",
+    id: "bib-4",
+    title: "SANS Penetration Testing Institute - Nmap Cheat Sheet & Field Guide",
+    author: "SANS Institute",
+    year: "2022",
+    publisher: "SANS Cyber Security Institute",
     url: "https://www.sans.org/posters/nmap-cheat-sheet/",
-    description: "Professional field reference cheat sheet published by the SANS Institute."
-  },
-  {
-    title: "OffSec Offensive Security (OSCP) Field Guide",
-    author: "Offensive Security",
-    type: "Training & Research",
-    url: "https://help.offsec.com/",
-    description: "Penetration testing methodologies for network discovery and vulnerability exploitation."
+    description: "Essential tactical cheatsheet for penetration testers and red teams detailing flags, timing options, and stealth scan parameters."
   }
 ];

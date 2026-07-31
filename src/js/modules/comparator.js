@@ -1,91 +1,101 @@
 /**
- * Dual Command Side-by-Side Comparator Module (English)
+ * Side-by-Side Dual Command Comparator Module
  */
 
-export function renderCommandComparison(containerEl, cmd1Obj, cmd2Obj) {
-  if (!containerEl || !cmd1Obj || !cmd2Obj) return;
+export function renderCommandComparison(containerEl, cmd1, cmd2) {
+  if (!containerEl || !cmd1 || !cmd2) return;
 
   containerEl.innerHTML = `
-    <div class="bg-slate-900/90 rounded-2xl p-6 border border-slate-800 shadow-2xl space-y-6">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div>
-          <h3 class="text-lg font-bold text-slate-100 flex items-center gap-2">
-            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-            Command Comparison Analysis
-          </h3>
-          <p class="text-xs text-slate-400">Side-by-side comparison of stealth rating, speed, risk level, and target scenario fit.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+      
+      <!-- Command A Card -->
+      <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <span class="px-2.5 py-1 bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono font-bold rounded">Command A</span>
+          <span class="text-xs text-slate-400 font-mono">${cmd1.category}</span>
+        </div>
+
+        <h3 class="text-lg font-extrabold text-white">${escapeHtml(cmd1.name)}</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">${escapeHtml(cmd1.description)}</p>
+
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-xs text-emerald-400 break-all">
+          ${escapeHtml(cmd1.commandPattern.replace("{target}", "192.168.1.1").replace("{ports}", "").replace("{timing}", "-T4").replace("{flags}", ""))}
+        </div>
+
+        <div class="space-y-2 text-xs border-t border-slate-800 pt-3">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Scan Speed:</span>
+            <span class="text-amber-400 font-bold font-mono">${getRatingStars(cmd1.speedLevel)} (${cmd1.speedLevel}/5)</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Stealth Rating:</span>
+            <span class="text-purple-400 font-bold font-mono">${getRatingStars(cmd1.stealthLevel)} (${cmd1.stealthLevel}/5)</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Risk Level:</span>
+            <span class="font-bold font-mono ${getRiskTextClass(cmd1.riskLevel)}">${cmd1.riskLevel}</span>
+          </div>
+        </div>
+
+        <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800 text-xs">
+          <span class="text-slate-400 font-semibold block mb-1">Target Scenario Fit:</span>
+          <p class="text-slate-300">${escapeHtml(cmd1.whenToUse)}</p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Command A Card -->
-        <div class="bg-slate-950/80 p-5 rounded-xl border border-cyan-500/30 space-y-4 relative">
-          <span class="absolute -top-3 left-4 px-2.5 py-0.5 rounded bg-cyan-500/20 text-cyan-400 text-xs font-mono font-bold border border-cyan-500/30">Command A</span>
-          <div class="pt-2">
-            <h4 class="text-base font-bold text-slate-100">${escapeHtml(cmd1Obj.name)}</h4>
-            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 font-mono text-xs text-emerald-400 mt-2 break-all">
-              ${escapeHtml(cmd1Obj.commandPattern.replace("{target}", "192.168.1.1").replace("{ports}", "").replace("{timing}", "-T4").replace("{flags}", ""))}
-            </div>
-          </div>
+      <!-- Command B Card -->
+      <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-4 shadow-xl">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <span class="px-2.5 py-1 bg-purple-500/10 text-purple-400 border border-purple-500/20 text-xs font-mono font-bold rounded">Command B</span>
+          <span class="text-xs text-slate-400 font-mono">${cmd2.category}</span>
+        </div>
 
-          <div class="space-y-2 text-xs">
-            <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Stealth Rating:</span>
-              <span class="text-cyan-400 font-bold font-mono">${getRatingStars(cmd1Obj.stealthLevel)} (${cmd1Obj.stealthLevel}/5)</span>
-            </div>
-            <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Scan Speed:</span>
-              <span class="text-emerald-400 font-bold font-mono">${getRatingStars(cmd1Obj.speedLevel)} (${cmd1Obj.speedLevel}/5)</span>
-            </div>
-            <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Risk Level:</span>
-              <span class="font-bold font-mono">${escapeHtml(cmd1Obj.riskLevel)}</span>
-            </div>
-          </div>
+        <h3 class="text-lg font-extrabold text-white">${escapeHtml(cmd2.name)}</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">${escapeHtml(cmd2.description)}</p>
 
-          <div>
-            <h5 class="text-xs font-semibold text-slate-400 mb-1">When Should You Choose This?</h5>
-            <p class="text-xs text-slate-300 bg-slate-900/50 p-2.5 rounded border border-slate-800/80">${escapeHtml(cmd1Obj.whenToUse)}</p>
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-xs text-emerald-400 break-all">
+          ${escapeHtml(cmd2.commandPattern.replace("{target}", "192.168.1.1").replace("{ports}", "").replace("{timing}", "-T4").replace("{flags}", ""))}
+        </div>
+
+        <div class="space-y-2 text-xs border-t border-slate-800 pt-3">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Scan Speed:</span>
+            <span class="text-amber-400 font-bold font-mono">${getRatingStars(cmd2.speedLevel)} (${cmd2.speedLevel}/5)</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Stealth Rating:</span>
+            <span class="text-purple-400 font-bold font-mono">${getRatingStars(cmd2.stealthLevel)} (${cmd2.stealthLevel}/5)</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Risk Level:</span>
+            <span class="font-bold font-mono ${getRiskTextClass(cmd2.riskLevel)}">${cmd2.riskLevel}</span>
           </div>
         </div>
 
-        <!-- Command B Card -->
-        <div class="bg-slate-950/80 p-5 rounded-xl border border-purple-500/30 space-y-4 relative">
-          <span class="absolute -top-3 left-4 px-2.5 py-0.5 rounded bg-purple-500/20 text-purple-400 text-xs font-mono font-bold border border-purple-500/30">Command B</span>
-          <div class="pt-2">
-            <h4 class="text-base font-bold text-slate-100">${escapeHtml(cmd2Obj.name)}</h4>
-            <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800 font-mono text-xs text-purple-400 mt-2 break-all">
-              ${escapeHtml(cmd2Obj.commandPattern.replace("{target}", "192.168.1.1").replace("{ports}", "").replace("{timing}", "-T4").replace("{flags}", ""))}
-            </div>
-          </div>
-
-          <div class="space-y-2 text-xs">
-            <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Stealth Rating:</span>
-              <span class="text-purple-400 font-bold font-mono">${getRatingStars(cmd2Obj.stealthLevel)} (${cmd2Obj.stealthLevel}/5)</span>
-            </div>
-            <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Scan Speed:</span>
-              <span class="text-emerald-400 font-bold font-mono">${getRatingStars(cmd2Obj.speedLevel)} (${cmd2Obj.speedLevel}/5)</span>
-            </div>
-            <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Risk Level:</span>
-              <span class="font-bold font-mono">${escapeHtml(cmd2Obj.riskLevel)}</span>
-            </div>
-          </div>
-
-          <div>
-            <h5 class="text-xs font-semibold text-slate-400 mb-1">When Should You Choose This?</h5>
-            <p class="text-xs text-slate-300 bg-slate-900/50 p-2.5 rounded border border-slate-800/80">${escapeHtml(cmd2Obj.whenToUse)}</p>
-          </div>
+        <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-800 text-xs">
+          <span class="text-slate-400 font-semibold block mb-1">Target Scenario Fit:</span>
+          <p class="text-slate-300">${escapeHtml(cmd2.whenToUse)}</p>
         </div>
       </div>
+
     </div>
   `;
 }
 
 function getRatingStars(num) {
-  return "★".repeat(num) + "☆".repeat(5 - num);
+  return "★".repeat(num || 3) + "☆".repeat(5 - (num || 3));
+}
+
+function getRiskTextClass(risk) {
+  switch (risk) {
+    case "Low":
+    case "Düşük": return "text-emerald-400";
+    case "Medium":
+    case "Orta": return "text-amber-400";
+    case "High":
+    case "Yüksek": return "text-rose-400";
+    default: return "text-slate-300";
+  }
 }
 
 function escapeHtml(str) {

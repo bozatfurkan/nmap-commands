@@ -2,7 +2,7 @@
 .DS_Store
 Thumbs.db
 
-# Logs & Temporary Files
+# Logs & Scratch Files
 *.log
 scratch/
 

@@ -1,13 +1,12 @@
 /**
- * Nmap Cheat Sheet Database (English)
- * Comprehensive list of Nmap flags, descriptions, categories, and practical examples.
+ * Nmap Cheat Sheet Database
  */
 
 export const CHEAT_SHEET_DATA = [
   {
     flag: "-sS",
     name: "TCP SYN Stealth Scan",
-    category: "Scan Types",
+    category: "Scan Types / Taramalar",
     description: "Half-open TCP scan. Does not complete 3-way handshake; default and fast.",
     example: "nmap -sS 192.168.1.1",
     impact: "High Stealth, Fast"
@@ -15,7 +14,7 @@ export const CHEAT_SHEET_DATA = [
   {
     flag: "-sT",
     name: "TCP Connect Scan",
-    category: "Scan Types",
+    category: "Scan Types / Taramalar",
     description: "Completes full TCP handshake when root privileges are unassigned.",
     example: "nmap -sT 192.168.1.1",
     impact: "Low Stealth, Easily Logged"
@@ -23,7 +22,7 @@ export const CHEAT_SHEET_DATA = [
   {
     flag: "-sU",
     name: "UDP Scan",
-    category: "Scan Types",
+    category: "Scan Types / Taramalar",
     description: "Probes connectionless UDP services (DNS, SNMP, DHCP).",
     example: "nmap -sU -p 53,161 192.168.1.1",
     impact: "Slower, Filtered Responses"
@@ -98,6 +97,6 @@ export const CHEAT_SHEET_DATA = [
     category: "Port Range",
     description: "Specifies custom port lists (-p 80,443) or all 65,535 TCP ports (-p-).",
     example: "nmap -p- 192.168.1.1",
-    impact: "Exhaustive Port Audit"
+    impact: "Full Port Coverage"
   }
 ];

@@ -1,42 +1,33 @@
 /**
- * Scenario-Based Step-by-Step Command Generator Wizard
+ * 4-Step Scenario-Based Guided Command Wizard Module
  */
 
 export class ScenarioWizard {
   constructor() {
     this.currentStep = 1;
     this.answers = {
-      objective: "discovery",
+      objective: "stealth_syn",
       speed: "-T4",
-      portRange: "top1000",
-      additionalFlags: []
+      portRange: "top1000"
     };
   }
 
   setStep(stepNum) {
-    this.currentStep = Math.max(1, Math.min(4, stepNum));
+    if (stepNum >= 1 && stepNum <= 4) {
+      this.currentStep = stepNum;
+    }
   }
 
   setAnswer(key, val) {
     this.answers[key] = val;
   }
 
-  toggleAdditionalFlag(flag) {
-    const idx = this.answers.additionalFlags.indexOf(flag);
-    if (idx >= 0) {
-      this.answers.additionalFlags.splice(idx, 1);
-    } else {
-      this.answers.additionalFlags.push(flag);
-    }
-  }
-
   generateWizardCommand(targetIp = "192.168.1.1") {
     let baseCmd = "nmap";
+    const speed = this.answers.speed || "-T4";
+    baseCmd += ` ${speed}`;
 
-    // 1. Add Timing
-    baseCmd += ` ${this.answers.speed}`;
-
-    // 2. Add Objective Flags
+    // Objective flag selection
     switch (this.answers.objective) {
       case "stealth_syn":
         baseCmd += " -sS";
@@ -50,17 +41,17 @@ export class ScenarioWizard {
       case "vuln_check":
         baseCmd += " --script=vuln";
         break;
+      case "firewall_bypass":
+        baseCmd += " -Pn -f -g 53";
+        break;
       case "aggressive_audit":
         baseCmd += " -A";
-        break;
-      case "firewall_bypass":
-        baseCmd += " -Pn -f -D RND:5";
         break;
       default:
         baseCmd += " -sS";
     }
 
-    // 3. Add Port Range
+    // Port selection (unless ping sweep)
     if (this.answers.objective !== "ping_sweep") {
       switch (this.answers.portRange) {
         case "fast100":
@@ -70,22 +61,15 @@ export class ScenarioWizard {
           baseCmd += " -p-";
           break;
         case "webOnly":
-          baseCmd += " -p 80,443,8080,8443";
+          baseCmd += " -p 80,443,8080";
           break;
         case "top1000":
         default:
-          break; // Default nmap behavior
+          break;
       }
     }
 
-    // 4. Add Custom Toggled Flags
-    if (this.answers.additionalFlags.length > 0) {
-      baseCmd += ` ${this.answers.additionalFlags.join(" ")}`;
-    }
-
-    // Target
     baseCmd += ` ${targetIp}`;
-
-    return baseCmd.replace(/\s+/g, " ").trim();
+    return baseCmd;
   }
 }

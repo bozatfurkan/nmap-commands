@@ -1,5 +1,5 @@
 /**
- * Interactive Terminal Simulator & Parameter Guide Renderer (English)
+ * Interactive Terminal Simulator & Parameter Guide Renderer
  */
 
 export function renderTerminalMock(containerEl, commandObj, customizerInstance) {
@@ -9,7 +9,9 @@ export function renderTerminalMock(containerEl, commandObj, customizerInstance) 
     ? customizerInstance.buildCustomCommand(commandObj)
     : commandObj.commandPattern.replace("{target}", "192.168.1.1").replace("{ports}", "").replace("{timing}", "-T4").replace("{flags}", "");
 
-  const mockText = commandObj.mockOutput.replace(/{target}/g, customizerInstance ? customizerInstance.target : "192.168.1.1");
+  const mockText = commandObj.mockOutput
+    ? commandObj.mockOutput.replace(/{target}/g, customizerInstance ? customizerInstance.target : "192.168.1.1")
+    : `Starting Nmap 7.94 ( https://nmap.org )\nNmap scan report for ${customizerInstance ? customizerInstance.target : "192.168.1.1"}\nHost is up.\nNmap done: 1 IP address scanned.`;
 
   containerEl.innerHTML = `
     <div class="terminal-window bg-slate-950 rounded-xl border border-slate-800 shadow-2xl overflow-hidden font-mono text-sm">
@@ -19,7 +21,7 @@ export function renderTerminalMock(containerEl, commandObj, customizerInstance) 
           <div class="w-3 h-3 rounded-full bg-rose-500/80"></div>
           <div class="w-3 h-3 rounded-full bg-amber-500/80"></div>
           <div class="w-3 h-3 rounded-full bg-emerald-500/80"></div>
-          <span class="ml-2 text-xs text-slate-400 font-sans font-medium">bash - root@kali: ~</span>
+          <span class="ml-2 text-xs text-slate-400 font-sans font-medium">bash - root@cyber-lab: ~</span>
         </div>
         <div class="text-xs text-slate-500 font-sans flex items-center gap-1">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -66,26 +68,26 @@ export function renderParameterGuide(containerEl, commandObj) {
       <!-- Metrics Bar inside Modal Details -->
       <div class="grid grid-cols-3 gap-3 p-3 bg-slate-950 rounded-xl border border-slate-800 text-center text-xs">
         <div class="space-y-1">
-          <span class="text-slate-400 block text-[11px]">Scan Speed</span>
+          <span class="text-slate-400 block text-[11px]">Scan Speed / Tarama Hızı</span>
           <span class="text-amber-400 font-bold font-mono">${getRatingStars(commandObj.speedLevel)} (${commandObj.speedLevel}/5)</span>
         </div>
         <div class="space-y-1 border-x border-slate-800">
-          <span class="text-slate-400 block text-[11px]">Stealth Rating</span>
+          <span class="text-slate-400 block text-[11px]">Stealth / Gizlilik</span>
           <span class="text-purple-400 font-bold font-mono">${getRatingStars(commandObj.stealthLevel)} (${commandObj.stealthLevel}/5)</span>
         </div>
         <div class="space-y-1">
-          <span class="text-slate-400 block text-[11px]">Risk Level</span>
+          <span class="text-slate-400 block text-[11px]">Risk Level / Risk</span>
           <span class="font-bold font-mono ${getRiskTextClass(commandObj.riskLevel)}">${commandObj.riskLevel}</span>
         </div>
       </div>
 
       <div class="space-y-2">
-        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">When Should You Use This?</h4>
+        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">When Should You Use This? / Ne Zaman Kullanılmalı?</h4>
         <p class="text-slate-200 text-sm bg-slate-800/40 p-3 rounded-lg border border-slate-800/80">${escapeHtml(commandObj.whenToUse)}</p>
       </div>
 
       <div class="space-y-2">
-        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Flag Explanations</h4>
+        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Flag Explanations / Bayrak Açıklamaları</h4>
         <div class="space-y-2">
           ${flagsHtml}
         </div>
@@ -95,7 +97,7 @@ export function renderParameterGuide(containerEl, commandObj) {
 }
 
 function getRatingStars(num) {
-  return "★".repeat(num) + "☆".repeat(5 - num);
+  return "★".repeat(num || 3) + "☆".repeat(5 - (num || 3));
 }
 
 function getRiskTextClass(risk) {

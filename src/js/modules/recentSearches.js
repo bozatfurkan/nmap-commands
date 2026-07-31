@@ -1,57 +1,46 @@
 /**
- * Recent Search History Manager using LocalStorage (English & Turkish)
+ * Recent Searches History Manager Module (LocalStorage)
  */
-
-const RECENT_SEARCH_STORAGE_KEY = "nmap_recent_searches_v1";
-const MAX_RECENT_ITEMS = 6;
 
 export class RecentSearchManager {
   constructor() {
-    this.history = this.loadHistory();
+    this.storageKey = "nmap_recent_searches_v1";
+    this.maxHistory = 6;
   }
 
-  loadHistory() {
+  getHistory() {
     try {
-      const data = localStorage.getItem(RECENT_SEARCH_STORAGE_KEY);
-      if (data) return JSON.parse(data);
+      const data = localStorage.getItem(this.storageKey);
+      return data ? JSON.parse(data) : [];
     } catch (e) {
-      console.warn("Error loading recent search history:", e);
-    }
-    return ["syn scan", "vuln script", "firewall bypass"];
-  }
-
-  saveHistory() {
-    try {
-      localStorage.setItem(RECENT_SEARCH_STORAGE_KEY, JSON.stringify(this.history));
-    } catch (e) {
-      console.error("Error saving recent search history:", e);
+      return [];
     }
   }
 
   addQuery(queryStr) {
-    const trimmed = (queryStr || '').trim();
-    if (!trimmed || trimmed.length < 2) return;
+    const q = (queryStr || '').trim();
+    if (!q || q.length < 2) return;
 
-    // Remove duplicates (case-insensitive)
-    this.history = this.history.filter(item => item.toLowerCase() !== trimmed.toLowerCase());
-    
-    // Add to beginning
-    this.history.unshift(trimmed);
+    let history = this.getHistory();
+    history = history.filter(item => item.toLowerCase() !== q.toLowerCase());
+    history.unshift(q);
 
-    // Limit array size
-    if (this.history.length > MAX_RECENT_ITEMS) {
-      this.history = this.history.slice(0, MAX_RECENT_ITEMS);
+    if (history.length > this.maxHistory) {
+      history = history.slice(0, this.maxHistory);
     }
 
-    this.saveHistory();
+    try {
+      localStorage.setItem(this.storageKey, JSON.stringify(history));
+    } catch (e) {
+      console.error("Error saving recent search to localStorage", e);
+    }
   }
 
   clearHistory() {
-    this.history = [];
-    this.saveHistory();
-  }
-
-  getHistory() {
-    return this.history;
+    try {
+      localStorage.removeItem(this.storageKey);
+    } catch (e) {
+      console.error("Error clearing search history", e);
+    }
   }
 }

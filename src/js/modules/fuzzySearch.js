@@ -1,115 +1,84 @@
 /**
- * Advanced Fuzzy Search Engine for Nmap Commands
- * Uses weighted string similarity, Levenshtein distance, and tag tokenization.
+ * Custom Levenshtein Distance & Weighted Keyword Fuzzy Search Engine
  */
 
-/**
- * Calculates Levenshtein Distance between two strings.
- */
-function levenshteinDistance(a, b) {
+export function calculateLevenshteinDistance(a, b) {
   const matrix = [];
-  const lenA = a.length;
-  const lenB = b.length;
 
-  for (let i = 0; i <= lenA; i++) {
+  for (let i = 0; i <= b.length; i++) {
     matrix[i] = [i];
   }
-  for (let j = 0; j <= lenB; j++) {
+
+  for (let j = 0; j <= a.length; j++) {
     matrix[0][j] = j;
   }
 
-  for (let i = 1; i <= lenA; i++) {
-    for (let j = 1; j <= lenB; j++) {
-      if (a[i - 1] === b[j - 1]) {
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
         matrix[i][j] = matrix[i - 1][j - 1];
       } else {
         matrix[i][j] = Math.min(
           matrix[i - 1][j - 1] + 1, // substitution
-          matrix[i][j - 1] + 1,     // insertion
-          matrix[i - 1][j] + 1      // deletion
+          Math.min(
+            matrix[i][j - 1] + 1,   // insertion
+            matrix[i - 1][j] + 1    // deletion
+          )
         );
       }
     }
   }
 
-  return matrix[lenA][lenB];
+  return matrix[b.length][a.length];
 }
 
-/**
- * Calculate similarity score between 0.0 and 1.0 based on Levenshtein distance
- */
-function stringSimilarity(s1, s2) {
-  const str1 = s1.toLowerCase().trim();
-  const str2 = s2.toLowerCase().trim();
-  if (str1 === str2) return 1.0;
-  if (str1.includes(str2) || str2.includes(str1)) return 0.85;
+export function calculateStringSimilarity(str1, str2) {
+  const s1 = str1.toLowerCase().trim();
+  const s2 = str2.toLowerCase().trim();
 
-  const maxLen = Math.max(str1.length, str2.length);
+  if (s1 === s2) return 1.0;
+  if (s1.includes(s2) || s2.includes(s1)) return 0.85;
+
+  const maxLen = Math.max(s1.length, s2.length);
   if (maxLen === 0) return 1.0;
 
-  const dist = levenshteinDistance(str1, str2);
+  const dist = calculateLevenshteinDistance(s1, s2);
   return Math.max(0, 1 - dist / maxLen);
 }
 
-/**
- * Performs fuzzy search over Nmap commands array
- * @param {Array} commandsList Array of Nmap command objects
- * @param {string} query Search input string
- * @returns {Array} Filtered and sorted array with score metadata
- */
-export function performFuzzySearch(commandsList, query) {
-  if (!query || query.trim() === "") {
+export function performFuzzySearch(commandsList, queryStr) {
+  if (!queryStr || queryStr.trim() === '') {
     return commandsList.map(cmd => ({ command: cmd, score: 1.0 }));
   }
 
-  const normalizedQuery = query.toLowerCase().trim();
-  const queryTokens = normalizedQuery.split(/\s+/);
+  const query = queryStr.toLowerCase().trim();
+  const tokens = query.split(/\s+/);
 
   const results = commandsList.map(cmd => {
     let maxScore = 0;
 
-    // Check exact or partial matches in name and description
-    const nameLower = cmd.name.toLowerCase();
-    const descLower = cmd.description.toLowerCase();
-    const patternLower = cmd.commandPattern.toLowerCase();
+    // Direct match check on name, commandPattern, description
+    const fullText = `${cmd.name} ${cmd.commandPattern} ${cmd.description} ${(cmd.keywords || []).join(' ')}`.toLowerCase();
+    
+    if (fullText.includes(query)) {
+      maxScore = 0.95;
+    } else {
+      tokens.forEach(token => {
+        (cmd.keywords || []).forEach(kw => {
+          const sim = calculateStringSimilarity(token, kw);
+          if (sim > maxScore) maxScore = sim;
+        });
 
-    if (nameLower.includes(normalizedQuery)) maxScore += 0.9;
-    if (patternLower.includes(normalizedQuery)) maxScore += 0.95;
-    if (descLower.includes(normalizedQuery)) maxScore += 0.5;
-
-    // Check keywords list with fuzzy matching
-    for (const kw of cmd.keywords) {
-      const kwLower = kw.toLowerCase();
-      if (kwLower === normalizedQuery) {
-        maxScore = Math.max(maxScore, 1.0);
-      } else if (kwLower.includes(normalizedQuery) || normalizedQuery.includes(kwLower)) {
-        maxScore = Math.max(maxScore, 0.88);
-      } else {
-        // Token level fuzzy match
-        for (const qToken of queryTokens) {
-          const sim = stringSimilarity(qToken, kwLower);
-          if (sim > 0.65) {
-            maxScore = Math.max(maxScore, sim * 0.8);
-          }
-        }
-      }
+        const nameSim = calculateStringSimilarity(token, cmd.name);
+        if (nameSim * 0.9 > maxScore) maxScore = nameSim * 0.9;
+      });
     }
 
-    // Flag exact match check (e.g. -sS, -Pn, -sV)
-    for (const flag of cmd.defaultFlags) {
-      if (flag.toLowerCase().includes(normalizedQuery)) {
-        maxScore = Math.max(maxScore, 0.98);
-      }
-    }
-
-    return {
-      command: cmd,
-      score: maxScore
-    };
+    return { command: cmd, score: maxScore };
   });
 
-  // Filter out non-matching results and sort descending by score
+  // Filter out low scores and sort descending
   return results
-    .filter(res => res.score > 0.3)
+    .filter(item => item.score > 0.35)
     .sort((a, b) => b.score - a.score);
 }

@@ -1,8 +1,8 @@
 /**
- * Target Liveness & Ping Check Simulator Module (English / Turkish i18n support)
+ * Target Liveness & Connectivity Ping Check Simulator Module
  */
 
-export function runPingSimulation(targetIp, containerLinesEl, statusBadgeEl, recEl, lang = "en") {
+export function runPingSimulation(targetIp, containerLinesEl, statusBadgeEl, recEl, lang = "tr") {
   if (!containerLinesEl || !statusBadgeEl || !recEl) return;
 
   const target = targetIp.trim() || "192.168.1.1";
@@ -14,7 +14,7 @@ export function runPingSimulation(targetIp, containerLinesEl, statusBadgeEl, rec
   recEl.innerHTML = `<p class="text-slate-400 italic">${lang === "tr" ? "Paket gecikmesi hesaplanıyor..." : "Calculating latency metrics..."}</p>`;
 
   let sequence = 1;
-  const isUp = !target.endsWith(".255") && !target.endsWith(".0"); // Simple realistic condition
+  const isUp = !target.endsWith(".255") && !target.endsWith(".0");
 
   const interval = setInterval(() => {
     if (sequence <= 4) {

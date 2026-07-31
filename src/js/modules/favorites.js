@@ -1,29 +1,28 @@
 /**
- * Favorites Manager using Web Storage API (LocalStorage)
+ * Favorites & Bookmarks Web Storage Manager
  */
-
-const STORAGE_KEY = "nmap_intelligence_favorites_v1";
 
 export class FavoritesManager {
   constructor() {
+    this.storageKey = "nmap_favorite_commands_v1";
     this.favorites = this.loadFavorites();
   }
 
   loadFavorites() {
     try {
-      const data = localStorage.getItem(STORAGE_KEY);
+      const data = localStorage.getItem(this.storageKey);
       return data ? JSON.parse(data) : [];
     } catch (e) {
-      console.warn("LocalStorage access error:", e);
+      console.error("Error reading favorites from localStorage", e);
       return [];
     }
   }
 
   saveFavorites() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.favorites));
+      localStorage.setItem(this.storageKey, JSON.stringify(this.favorites));
     } catch (e) {
-      console.error("LocalStorage save error:", e);
+      console.error("Error saving favorites to localStorage", e);
     }
   }
 
@@ -32,9 +31,8 @@ export class FavoritesManager {
   }
 
   toggleFavorite(cmdId) {
-    const index = this.favorites.indexOf(cmdId);
-    if (index >= 0) {
-      this.favorites.splice(index, 1);
+    if (this.isFavorite(cmdId)) {
+      this.favorites = this.favorites.filter(id => id !== cmdId);
     } else {
       this.favorites.push(cmdId);
     }
@@ -43,6 +41,6 @@ export class FavoritesManager {
   }
 
   getFavoriteIds() {
-    return [...this.favorites];
+    return this.favorites;
   }
 }
