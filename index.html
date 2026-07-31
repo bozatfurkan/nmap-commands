@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr" class="dark">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -57,41 +57,30 @@
       <!-- Navigation Links (Desktop) -->
       <nav class="hidden md:flex items-center gap-1 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800/80">
         <button data-tab="search" class="nav-tab active px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all">
-          <i class="fa-solid fa-magnifying-glass text-cyan-400"></i> Arama & Explorer
+          <i class="fa-solid fa-magnifying-glass text-cyan-400"></i> Search & Explorer
         </button>
         <button data-tab="wizard" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all">
-          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Sihirbaz
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Wizard
         </button>
         <button data-tab="comparator" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all">
-          <i class="fa-solid fa-code-compare text-purple-400"></i> Karşılaştırıcı
+          <i class="fa-solid fa-code-compare text-purple-400"></i> Comparator
         </button>
         <button data-tab="cheatsheet" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all">
           <i class="fa-solid fa-table-list text-emerald-400"></i> Cheat-Sheet
         </button>
         <button data-tab="timing" class="nav-tab px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center gap-2 transition-all">
-          <i class="fa-solid fa-gauge-high text-rose-400"></i> Zamanlama (-T)
+          <i class="fa-solid fa-gauge-high text-rose-400"></i> Timing (-T)
         </button>
       </nav>
 
       <!-- Action Buttons & Controls -->
       <div class="flex items-center gap-2">
-        <button id="btnThemeToggle" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-800 rounded-lg text-xs font-bold font-mono flex items-center gap-1.5 transition" title="Karanlık/Aydınlık Tema Değiştir">
+        <button id="btnThemeToggle" class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-800 rounded-lg text-xs font-bold font-mono flex items-center gap-1.5 transition" title="Toggle Dark/Light Theme">
           <i class="fa-solid fa-moon text-xs" id="themeIcon"></i> <span id="themeLabel" class="hidden sm:inline">Dark</span>
         </button>
-        
-        <!-- 5-Language Selector Dropdown -->
-        <div class="relative">
-          <select id="selectLang" class="px-2.5 py-1.5 bg-slate-900 text-cyan-400 border border-cyan-500/30 rounded-lg text-xs font-bold font-mono cursor-pointer focus:outline-none focus:ring-1 focus:ring-cyan-500 transition">
-            <option value="tr" selected>🇹🇷 Türkçe</option>
-            <option value="ku">☀️ Kurdî</option>
-            <option value="en">🇬🇧 English</option>
-            <option value="zh">🇨🇳 中文</option>
-            <option value="ja">🇯🇵 日本語</option>
-          </select>
-        </div>
 
         <button id="btnDisclaimerModal" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-triangle-exclamation"></i> <span class="hidden sm:inline" id="textBtnDisclaimer">Etik Kullanım</span>
+          <i class="fa-solid fa-triangle-exclamation"></i> <span class="hidden sm:inline" id="textBtnDisclaimer">Disclaimer</span>
         </button>
       </div>
 
@@ -103,11 +92,11 @@
 
     <!-- MOBILE NAVIGATION TAB BAR -->
     <div class="flex md:hidden items-center justify-between gap-1 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800/80 text-xs overflow-x-auto">
-      <button data-tab="search" class="nav-tab active px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap">Arama</button>
-      <button data-tab="wizard" class="nav-tab px-3 py-1.5 rounded-lg text-slate-400 font-semibold whitespace-nowrap">Sihirbaz</button>
-      <button data-tab="comparator" class="nav-tab px-3 py-1.5 rounded-lg text-slate-400 font-semibold whitespace-nowrap">Kıyasla</button>
+      <button data-tab="search" class="nav-tab active px-3 py-1.5 rounded-lg font-semibold whitespace-nowrap">Search</button>
+      <button data-tab="wizard" class="nav-tab px-3 py-1.5 rounded-lg text-slate-400 font-semibold whitespace-nowrap">Wizard</button>
+      <button data-tab="comparator" class="nav-tab px-3 py-1.5 rounded-lg text-slate-400 font-semibold whitespace-nowrap">Compare</button>
       <button data-tab="cheatsheet" class="nav-tab px-3 py-1.5 rounded-lg text-slate-400 font-semibold whitespace-nowrap">Cheat-Sheet</button>
-      <button data-tab="timing" class="nav-tab px-3 py-1.5 rounded-lg text-slate-400 font-semibold whitespace-nowrap">Zamanlama</button>
+      <button data-tab="timing" class="nav-tab px-3 py-1.5 rounded-lg text-slate-400 font-semibold whitespace-nowrap">Timing</button>
     </div>
 
     <!-- TAB 1: SEARCH & EXPLORER (DEFAULT) -->
@@ -121,15 +110,15 @@
         <div class="relative z-10 max-w-3xl space-y-4">
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-full text-xs font-mono font-medium" id="textHeroBadge">
             <span class="w-2 h-2 rounded-full bg-cyan-400 live-indicator"></span>
-            Bulanık Arama Motoru Aktif
+            Fuzzy Search Engine Active
           </div>
           
           <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-            Nmap Komutlarını <span class="bg-gradient-to-r from-cyan-400 via-emerald-400 to-purple-400 bg-clip-text text-transparent">Akıllı Bulanık Arama</span> İle Keşfedin
+            Discover Nmap Commands With <span class="bg-gradient-to-r from-cyan-400 via-emerald-400 to-purple-400 bg-clip-text text-transparent">Smart Fuzzy Matching</span>
           </h1>
           
           <p class="text-sm sm:text-base text-slate-400 leading-relaxed" id="textHeroDesc">
-            Hatalı terim yazsanız bile (örn. <code class="text-cyan-400 font-mono">sny scn</code>, <code class="text-amber-400 font-mono">vuln script</code>, <code class="text-emerald-400 font-mono">pingless</code>, <code class="text-purple-400 font-mono">decoy</code>, <code class="text-rose-400 font-mono">eternalblue</code>), motorumuz en doğru Nmap bayraklarını anında bulur.
+            Even if you type typos or partial terms (e.g. <code class="text-cyan-400 font-mono">sny scn</code>, <code class="text-amber-400 font-mono">vuln script</code>, <code class="text-emerald-400 font-mono">pingless</code>, <code class="text-purple-400 font-mono">decoy</code>, <code class="text-rose-400 font-mono">eternalblue</code>), our engine instantly finds exact Nmap flags.
           </p>
 
           <!-- SEARCH INPUT BAR -->
@@ -138,7 +127,7 @@
               <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             </div>
             <input type="text" id="searchInput" 
-              placeholder="Komut, bayrak, zafiyet veya hatalı terim yazın (örn: syn scan, -sV, firewall bypass, eternalblue)..." 
+              placeholder="Search command, flag, vulnerability or typo (e.g. syn scan, -sV, firewall bypass, eternalblue)..." 
               class="w-full pl-12 pr-12 py-4 bg-slate-900/90 text-slate-100 placeholder-slate-500 rounded-2xl border-2 border-slate-800 focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 text-sm sm:text-base transition font-sans shadow-xl">
             <button id="btnClearSearch" class="hidden absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300">
               <i class="fa-solid fa-circle-xmark text-lg"></i>
@@ -148,19 +137,19 @@
           <!-- Recent Searches History Bar -->
           <div id="recentSearchesBar" class="flex flex-wrap items-center gap-2 pt-2 text-xs">
             <span class="text-slate-400 font-semibold flex items-center gap-1" id="textRecentLabel">
-              <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> Son Aramalar:
+              <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> Recent Searches:
             </span>
             <div id="recentTagsContainer" class="flex flex-wrap items-center gap-1.5">
               <!-- Dynamically populated via JS -->
             </div>
-            <button id="btnClearRecent" class="text-[10px] text-slate-500 hover:text-rose-400 transition ml-1" title="Arama Geçmişini Temizle">
+            <button id="btnClearRecent" class="text-[10px] text-slate-500 hover:text-rose-400 transition ml-1" title="Clear Search History">
               <i class="fa-solid fa-trash-can"></i>
             </button>
           </div>
 
           <!-- Quick Tag Suggestions -->
           <div class="flex flex-wrap items-center gap-2 text-xs">
-            <span class="text-slate-500 font-semibold" id="textQuickTagsLabel">Hızlı Aramalar:</span>
+            <span class="text-slate-500 font-semibold" id="textQuickTagsLabel">Quick Tags:</span>
             <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-slate-800 rounded-md transition font-mono" data-query="sny scn">sny scn</button>
             <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-800 rounded-md transition font-mono" data-query="vuln script">vuln script</button>
             <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 rounded-md transition font-mono" data-query="pingless">pingless</button>
@@ -179,14 +168,14 @@
               <i class="fa-solid fa-sliders text-sm"></i>
             </div>
             <div>
-              <h3 class="font-bold text-base text-slate-100" id="textCustomizerTitle">Canlı IP, Port & Bayrak Özelleştirici</h3>
-              <p class="text-xs text-slate-400" id="textCustomizerSub">Hedef IP ve port ayarları üretilen tüm komutlara anlık uygulanır.</p>
+              <h3 class="font-bold text-base text-slate-100" id="textCustomizerTitle">Live IP, Port & Flag Customizer</h3>
+              <p class="text-xs text-slate-400" id="textCustomizerSub">Target IP and port adjustments update across all generated commands in real time.</p>
             </div>
           </div>
 
           <!-- Export Actions -->
           <div class="flex flex-wrap items-center gap-2">
-            <button id="btnExportSh" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition" title="Bash Script (.sh) Olarak İndir">
+            <button id="btnExportSh" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition" title="Export Executable Bash Script (.sh)">
               <i class="fa-solid fa-terminal text-purple-400"></i> Bash (.sh) 💻
             </button>
             <button id="btnExportTxt" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
@@ -206,7 +195,7 @@
           <div>
             <div class="flex items-center justify-between mb-1">
               <label for="inputTargetIp" class="block font-semibold text-slate-300" id="textLabelTargetIp">
-                <i class="fa-solid fa-network-wired text-cyan-400 mr-1"></i> Hedef IP / Subnet:
+                <i class="fa-solid fa-network-wired text-cyan-400 mr-1"></i> Target IP / Subnet:
               </label>
               <button id="btnPingCheck" class="text-[11px] font-mono text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 px-2 py-0.5 rounded border border-cyan-500/20 flex items-center gap-1 transition">
                 <i class="fa-solid fa-bolt text-amber-400"></i> Ping Check ⚡
@@ -219,31 +208,31 @@
           <!-- Port Range Input -->
           <div>
             <label for="inputPorts" class="block font-semibold text-slate-300 mb-1" id="textLabelPorts">
-              <i class="fa-solid fa-ethernet text-amber-400 mr-1"></i> Port Aralığı (Örn: 80,443 veya 1-1000):
+              <i class="fa-solid fa-ethernet text-amber-400 mr-1"></i> Port Range (e.g. 80,443 or 1-1000):
             </label>
-            <input type="text" id="inputPorts" placeholder="Varsayılan ilk 1000 port" 
+            <input type="text" id="inputPorts" placeholder="Default top 1000 ports" 
               class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-amber-400 font-mono text-xs focus:border-cyan-500 focus:outline-none">
           </div>
 
           <!-- Timing Selector -->
           <div>
             <label for="selectTiming" class="block font-semibold text-slate-300 mb-1" id="textLabelTiming">
-              <i class="fa-solid fa-gauge-high text-rose-400 mr-1"></i> Zamanlama / Hız Şablonu:
+              <i class="fa-solid fa-gauge-high text-rose-400 mr-1"></i> Timing / Speed Template:
             </label>
             <select id="selectTiming" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-rose-400 font-mono text-xs focus:border-cyan-500 focus:outline-none">
-              <option value="-T0">-T0 Paranoid (Aşırı Yavaş, Max Gizlilik)</option>
-              <option value="-T1">-T1 Sneaky (Sessiz)</option>
-              <option value="-T2">-T2 Polite (Kibar, Sunucu Dostu)</option>
-              <option value="-T3">-T3 Normal (Varsayılan)</option>
-              <option value="-T4" selected>-T4 Aggressive (Hızlı, Tavsiye Edilen)</option>
-              <option value="-T5">-T5 Insane (Aşırı Hızlı)</option>
+              <option value="-T0">-T0 Paranoid (Extremely Slow, Max Stealth)</option>
+              <option value="-T1">-T1 Sneaky (Quiet)</option>
+              <option value="-T2">-T2 Polite (Polite, Server Friendly)</option>
+              <option value="-T3">-T3 Normal (Default)</option>
+              <option value="-T4" selected>-T4 Aggressive (Fast, Recommended)</option>
+              <option value="-T5">-T5 Insane (Ultra Fast)</option>
             </select>
           </div>
         </div>
 
         <!-- Quick Flag Toggles -->
         <div class="flex flex-wrap items-center gap-4 pt-2 text-xs border-t border-slate-800/60">
-          <span class="text-slate-400 font-semibold" id="textToggleExtraFlags">Ek Bayrak Ekle:</span>
+          <span class="text-slate-400 font-semibold" id="textToggleExtraFlags">Toggle Extra Flags:</span>
           
           <label class="inline-flex items-center gap-2 cursor-pointer bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700">
             <input type="checkbox" id="chkPn" class="rounded border-slate-700 text-cyan-500 focus:ring-cyan-500 bg-slate-900">
@@ -252,22 +241,22 @@
 
           <label class="inline-flex items-center gap-2 cursor-pointer bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700">
             <input type="checkbox" id="chkSv" class="rounded border-slate-700 text-emerald-500 focus:ring-emerald-500 bg-slate-900">
-            <span class="font-mono text-emerald-400">-sV (Servis Versiyon)</span>
+            <span class="font-mono text-emerald-400">-sV (Service Version)</span>
           </label>
 
           <label class="inline-flex items-center gap-2 cursor-pointer bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700">
             <input type="checkbox" id="chkO" class="rounded border-slate-700 text-purple-500 focus:ring-purple-500 bg-slate-900">
-            <span class="font-mono text-purple-400">-O (OS Tespiti)</span>
+            <span class="font-mono text-purple-400">-O (OS Detection)</span>
           </label>
 
           <label class="inline-flex items-center gap-2 cursor-pointer bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700">
             <input type="checkbox" id="chkA" class="rounded border-slate-700 text-rose-500 focus:ring-rose-500 bg-slate-900">
-            <span class="font-mono text-rose-400">-A (Agresif Mod)</span>
+            <span class="font-mono text-rose-400">-A (Aggressive Mode)</span>
           </label>
 
           <label class="inline-flex items-center gap-2 cursor-pointer bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700">
             <input type="checkbox" id="chkV" class="rounded border-slate-700 text-amber-500 focus:ring-amber-500 bg-slate-900">
-            <span class="font-mono text-amber-400">-v (Detaylı Log)</span>
+            <span class="font-mono text-amber-400">-v (Verbose Log)</span>
           </label>
         </div>
       </div>
@@ -276,34 +265,34 @@
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2" id="categoryFilters">
           <button data-cat="all" class="cat-pill active px-3.5 py-2 rounded-xl text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 transition">
-            Tüm Komutlar (<span id="countAll">0</span>)
+            All Commands (<span id="countAll">0</span>)
           </button>
           <button data-cat="discovery" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 transition">
-            🔍 Host Keşfi
+            🔍 Host Discovery
           </button>
           <button data-cat="port_scan" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 transition">
-            🔌 Port Taramaları
+            🔌 Port Scanning
           </button>
           <button data-cat="service_os" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 transition">
-            🛠️ Servis & OS
+            🛠️ Service & OS
           </button>
           <button data-cat="vuln_scripts" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 transition">
-            🛡️ Zafiyet Betikleri (NSE)
+            🛡️ Vulnerability Scripts (NSE)
           </button>
           <button data-cat="evasion" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 transition">
-            🥷 Güvenlik Duvarı Atlatma
+            🥷 Firewall Evasion
           </button>
           <button data-cat="favorites" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-amber-400 border border-slate-800 hover:border-amber-500/30 transition">
-            ⭐ Favorilerim (<span id="countFavorites">0</span>)
+            ⭐ Bookmarks (<span id="countFavorites">0</span>)
           </button>
         </div>
 
         <div class="text-xs text-slate-400">
-          Gösterilen: <span id="resultsCount" class="font-bold text-cyan-400 font-mono">0</span> komut
+          Showing: <span id="resultsCount" class="font-bold text-cyan-400 font-mono">0</span> commands
         </div>
       </div>
 
-      <!-- COMMAND CARDS RESULTS GRID (STREAMLINED & DECLUTTERED) -->
+      <!-- COMMAND CARDS RESULTS GRID -->
       <div id="commandCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Dynamic Cards Inserted Here via JS -->
       </div>
@@ -317,16 +306,16 @@
         <!-- Wizard Title -->
         <div class="text-center max-w-2xl mx-auto space-y-2">
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-mono font-medium" id="textWizBadge">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Adım Adım Rehberli Asistan
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Step-by-Step Guided Assistant
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textWizTitle">Senaryo Tabanlı Hızlı Sihirbaz</h2>
-          <p class="text-slate-400 text-sm" id="textWizSub">Adım adım hedefinizi seçin; akıllı motor hedefinize uygun Nmap parametrelerini üretsin.</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textWizTitle">Scenario-Based Command Wizard</h2>
+          <p class="text-slate-400 text-sm" id="textWizSub">Select your objective step by step; the intelligent engine will build optimized Nmap flags for your target.</p>
         </div>
 
         <!-- Wizard Progress Bar -->
         <div class="max-w-xl mx-auto">
           <div class="flex items-center justify-between text-xs font-semibold text-slate-400 mb-2">
-            <span id="wizardStepLabel">Adım 1 / 4: Tarama Amacı</span>
+            <span id="wizardStepLabel">Step 1 / 4: Scanning Objective</span>
             <span id="wizardPercent">25%</span>
           </div>
           <div class="w-full h-2.5 bg-slate-950 rounded-full overflow-hidden border border-slate-800">
@@ -339,34 +328,34 @@
           
           <!-- Step 1 -->
           <div class="wiz-step space-y-4" data-step="1">
-            <h3 class="text-base font-bold text-slate-200">1. Tarama Amacınız Nedir?</h3>
+            <h3 class="text-base font-bold text-slate-200">1. What is your scanning objective?</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizObj" value="stealth_syn" checked class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">Gizli SYN Taraması</span>
-                  <span class="text-slate-400">Yarı açık varsayılan hızlı port taraması (-sS).</span>
+                  <span class="font-bold text-slate-200 block">Stealth SYN Scan</span>
+                  <span class="text-slate-400">Half-open default fast port scan (-sS).</span>
                 </div>
               </label>
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizObj" value="ping_sweep" class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">Sadece Aktif Cihazları Bul</span>
-                  <span class="text-slate-400">Port taraması yapmadan IP liveness keşfi (-sn).</span>
+                  <span class="font-bold text-slate-200 block">Active Host Discovery Only</span>
+                  <span class="text-slate-400">IP liveness check without port scanning (-sn).</span>
                 </div>
               </label>
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizObj" value="service_ver" class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">Servis Versiyon Tespiti</span>
-                  <span class="text-slate-400">Yazılım isimleri ve tam sürüm bilgileri (-sV).</span>
+                  <span class="font-bold text-slate-200 block">Service Version Fingerprinting</span>
+                  <span class="text-slate-400">Software names and version details (-sV).</span>
                 </div>
               </label>
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizObj" value="vuln_check" class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">Zafiyet Taraması (NSE)</span>
-                  <span class="text-slate-400">CVE açıklarını arayan otomatik NSE betikleri.</span>
+                  <span class="font-bold text-slate-200 block">Vulnerability Audit (NSE)</span>
+                  <span class="text-slate-400">Automated NSE scripts auditing CVEs.</span>
                 </div>
               </label>
             </div>
@@ -374,27 +363,27 @@
 
           <!-- Step 2 -->
           <div class="wiz-step hidden space-y-4" data-step="2">
-            <h3 class="text-base font-bold text-slate-200">2. Zamanlama ve Hız Seçimi (-T)</h3>
+            <h3 class="text-base font-bold text-slate-200">2. Select Timing & Speed (-T)</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizSpeed" value="-T4" checked class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">-T4 Aggressive (Önerilen)</span>
-                  <span class="text-slate-400">Hızlı ve güvenilir geniş bant taraması.</span>
+                  <span class="font-bold text-slate-200 block">-T4 Aggressive (Recommended)</span>
+                  <span class="text-slate-400">Fast broadband network scanning.</span>
                 </div>
               </label>
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizSpeed" value="-T2" class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">-T2 Polite (Kibar)</span>
-                  <span class="text-slate-400">Sunucuyu yormayan düşük bant genişliği.</span>
+                  <span class="font-bold text-slate-200 block">-T2 Polite</span>
+                  <span class="text-slate-400">Low bandwidth usage for production servers.</span>
                 </div>
               </label>
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizSpeed" value="-T0" class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">-T0 Paranoid (Max Gizlilik)</span>
-                  <span class="text-slate-400">IDS atlatmak için aşırı yavaş paket gönderimi.</span>
+                  <span class="font-bold text-slate-200 block">-T0 Paranoid (Max Stealth)</span>
+                  <span class="text-slate-400">Extremely slow probe pacing to evade IDS.</span>
                 </div>
               </label>
             </div>
@@ -402,27 +391,27 @@
 
           <!-- Step 3 -->
           <div class="wiz-step hidden space-y-4" data-step="3">
-            <h3 class="text-base font-bold text-slate-200">3. Port Kapsamını Belirleyin</h3>
+            <h3 class="text-base font-bold text-slate-200">3. Define Port Scope</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizPort" value="top1000" checked class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">En Popüler 1000 Port</span>
-                  <span class="text-slate-400">Varsayılan standart Nmap port listesi.</span>
+                  <span class="font-bold text-slate-200 block">Top 1000 Ports</span>
+                  <span class="text-slate-400">Standard default Nmap port list.</span>
                 </div>
               </label>
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizPort" value="fast100" class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">Hızlı 100 Port (-F)</span>
-                  <span class="text-slate-400">Sadece en sık kullanılan 100 port.</span>
+                  <span class="font-bold text-slate-200 block">Fast 100 Ports (-F)</span>
+                  <span class="text-slate-400">High-speed top 100 ports list.</span>
                 </div>
               </label>
               <label class="p-4 bg-slate-950 rounded-xl border border-slate-800 hover:border-cyan-500/40 cursor-pointer flex items-start gap-3 transition">
                 <input type="radio" name="wizPort" value="full65535" class="mt-1 text-cyan-500">
                 <div>
-                  <span class="font-bold text-slate-200 block">Tüm 65,535 Portlar (-p-)</span>
-                  <span class="text-slate-400">Eksiksiz tam güvenlik taraması.</span>
+                  <span class="font-bold text-slate-200 block">All 65,535 Ports (-p-)</span>
+                  <span class="text-slate-400">Comprehensive full TCP port audit.</span>
                 </div>
               </label>
             </div>
@@ -431,13 +420,13 @@
           <!-- Step 4 -->
           <div class="wiz-step hidden space-y-4" data-step="4">
             <h3 class="text-base font-bold text-emerald-400 flex items-center gap-2">
-              <i class="fa-solid fa-circle-check"></i> Oluşturulan Özel Nmap Komutunuz:
+              <i class="fa-solid fa-circle-check"></i> Generated Custom Nmap Command:
             </h3>
             
             <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-emerald-400 text-sm flex items-center justify-between gap-4">
               <span id="wizResultCmd" class="select-all">nmap -T4 -sS 192.168.1.1</span>
               <button id="btnWizCopy" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-sans transition shrink-0">
-                <i class="fa-solid fa-copy"></i> Kopyala
+                <i class="fa-solid fa-copy"></i> Copy
               </button>
             </div>
 
@@ -450,10 +439,10 @@
         <!-- Wizard Navigation Buttons -->
         <div class="flex items-center justify-between border-t border-slate-800 pt-6 max-w-2xl mx-auto">
           <button id="btnWizPrev" disabled class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-slate-300 rounded-xl text-xs font-semibold transition">
-            <i class="fa-solid fa-arrow-left mr-1"></i> Geri
+            <i class="fa-solid fa-arrow-left mr-1"></i> Back
           </button>
           <button id="btnWizNext" class="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-cyan-500/20">
-            İleri <i class="fa-solid fa-arrow-right ml-1"></i>
+            Next <i class="fa-solid fa-arrow-right ml-1"></i>
           </button>
         </div>
 
@@ -466,20 +455,20 @@
         
         <div class="text-center max-w-2xl mx-auto space-y-2">
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-full text-xs font-mono font-medium">
-            <i class="fa-solid fa-code-compare"></i> Yan Yana Kıyaslama
+            <i class="fa-solid fa-code-compare"></i> Side-by-Side Comparison
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textCompTitle">Komut Karşılaştırma Analizi</h2>
-          <p class="text-slate-400 text-sm" id="textCompSub">İki farklı komutun gizlilik, hız, risk seviyesi ve senaryo uyumunun kıyaslaması.</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textCompTitle">Command Comparison Analysis</h2>
+          <p class="text-slate-400 text-sm" id="textCompSub">Side-by-side comparison of stealth rating, scan speed, risk level, and target scenario fit.</p>
         </div>
 
         <!-- Select Selectors -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs max-w-4xl mx-auto">
           <div>
-            <label for="selectCmdA" class="block font-semibold text-cyan-400 mb-1" id="textCompCmdA">Komut A Seçin:</label>
+            <label for="selectCmdA" class="block font-semibold text-cyan-400 mb-1" id="textCompCmdA">Select Command A:</label>
             <select id="selectCmdA" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 font-mono text-xs focus:border-cyan-500 focus:outline-none"></select>
           </div>
           <div>
-            <label for="selectCmdB" class="block font-semibold text-purple-400 mb-1" id="textCompCmdB">Komut B Seçin:</label>
+            <label for="selectCmdB" class="block font-semibold text-purple-400 mb-1" id="textCompCmdB">Select Command B:</label>
             <select id="selectCmdB" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 font-mono text-xs focus:border-purple-500 focus:outline-none"></select>
           </div>
         </div>
@@ -496,10 +485,10 @@
         
         <div class="space-y-2">
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-xs font-mono font-medium">
-            <i class="fa-solid fa-table-list"></i> Referans Tablosu
+            <i class="fa-solid fa-table-list"></i> Reference Table
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textCsTitle">İnteraktif Nmap Cheat-Sheet</h2>
-          <p class="text-slate-400 text-sm" id="textCsSub">Temel Nmap bayraklarının ve parametrelerinin detaylı referans tablosu.</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textCsTitle">Interactive Nmap Cheat-Sheet</h2>
+          <p class="text-slate-400 text-sm" id="textCsSub">Comprehensive reference table of core Nmap command switches and parameters.</p>
         </div>
 
         <!-- Table Container -->
@@ -507,11 +496,11 @@
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-950 text-slate-400 uppercase font-mono font-bold border-b border-slate-800">
               <tr>
-                <th class="p-3.5" id="textCsColFlag">Bayrak</th>
-                <th class="p-3.5" id="textCsColNameCat">Adı & Kategori</th>
-                <th class="p-3.5" id="textCsColDesc">Açıklama</th>
-                <th class="p-3.5" id="textCsColExample">Örnek Sözdizimi</th>
-                <th class="p-3.5" id="textCsColImpact">Ağ Etkisi</th>
+                <th class="p-3.5" id="textCsColFlag">Flag</th>
+                <th class="p-3.5" id="textCsColNameCat">Name & Category</th>
+                <th class="p-3.5" id="textCsColDesc">Description</th>
+                <th class="p-3.5" id="textCsColExample">Example Syntax</th>
+                <th class="p-3.5" id="textCsColImpact">Network Impact</th>
               </tr>
             </thead>
             <tbody id="cheatSheetTableBody" class="divide-y divide-slate-800/60">
@@ -529,10 +518,10 @@
         
         <div class="space-y-2">
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-full text-xs font-mono font-medium">
-            <i class="fa-solid fa-gauge-high"></i> Zamanlama Şablonları (-T0 .. -T5)
+            <i class="fa-solid fa-gauge-high"></i> Timing Templates (-T0 .. -T5)
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textTimingTitle">Nmap Zamanlama Rehberi</h2>
-          <p class="text-slate-400 text-sm" id="textTimingSub">Paket gecikmesi, RTT zaman aşımı ve IDS hassasiyet detayları.</p>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textTimingTitle">Nmap Timing Guide</h2>
+          <p class="text-slate-400 text-sm" id="textTimingSub">Packet delay pacing, RTT timeout, and IDS alert sensitivity details.</p>
         </div>
 
         <div id="timingCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -546,7 +535,7 @@
     <section class="bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-800 space-y-4">
       <div class="flex items-center gap-3">
         <i class="fa-solid fa-book-bookmark text-cyan-400 text-lg"></i>
-        <h3 class="font-extrabold text-lg text-white" id="textBibTitle">Resmi Bibliyografya ve Teknik Referanslar</h3>
+        <h3 class="font-extrabold text-lg text-white" id="textBibTitle">Official Bibliography & Technical References</h3>
       </div>
       <div id="bibliographyContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- JS Populated -->
@@ -579,7 +568,7 @@
       <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-emerald-400 text-xs flex items-center justify-between gap-4">
         <span id="simModalCmdStr" class="select-all">nmap -sS 192.168.1.1</span>
         <button id="btnCopySimCmd" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-sans transition shrink-0">
-          <i class="fa-solid fa-copy"></i> Kopyala
+          <i class="fa-solid fa-copy"></i> Copy
         </button>
       </div>
 
@@ -594,7 +583,7 @@
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-bolt text-amber-400"></i>
-          <h3 class="font-bold text-white text-base">Hedef Canlılık Testi (Ping Check)</h3>
+          <h3 class="font-bold text-white text-base">Target Liveness & Ping Check Simulator</h3>
         </div>
         <button id="btnClosePingCheck" class="text-slate-400 hover:text-slate-200">
           <i class="fa-solid fa-xmark"></i>
@@ -603,8 +592,8 @@
 
       <div class="space-y-3">
         <div class="flex items-center justify-between text-xs font-mono">
-          <span class="text-slate-400">Hedef IP: <strong id="pingTargetIpStr" class="text-cyan-400">192.168.1.1</strong></span>
-          <span id="pingBadgeStatus" class="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded text-[10px]">Test Ediliyor...</span>
+          <span class="text-slate-400">Target IP: <strong id="pingTargetIpStr" class="text-cyan-400">192.168.1.1</strong></span>
+          <span id="pingBadgeStatus" class="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded text-[10px]">Testing...</span>
         </div>
 
         <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 font-mono text-xs space-y-1 min-h-[100px]" id="pingConsoleLines"></div>
@@ -618,16 +607,16 @@
     <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center gap-3 text-rose-400">
         <i class="fa-solid fa-shield-cat text-2xl"></i>
-        <h3 class="font-extrabold text-lg text-white" id="textDisclaimerTitle">Yasal & Etik Kullanım Uyarısı</h3>
+        <h3 class="font-extrabold text-lg text-white" id="textDisclaimerTitle">Legal & Ethical Disclaimer</h3>
       </div>
 
       <p class="text-xs text-slate-300 leading-relaxed">
-        <strong>Uyarı:</strong> Bu platformdaki Nmap komutları yalnızca yetkili sızma testi, eğitim ve güvenlik denetimi amacıyla tasarlanmıştır. İzin alınmamış sistemlerde tarama yapmak bilişim suçudur.
+        <strong>Warning:</strong> The Nmap command syntax and scanning recipes provided on this platform are strictly intended for authorized penetration testing, educational research, and defensive security auditing. Executing network scans against unauthorized third-party infrastructure without explicit written consent is illegal.
       </p>
 
       <div class="pt-2 flex justify-end">
         <button id="btnConfirmDisclaimer" class="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded-xl text-xs transition" id="textDisclaimerBtn">
-          Anladım ve Kabul Ediyorum
+          I Understand & Accept Terms
         </button>
       </div>
     </div>

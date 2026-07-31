@@ -1,13 +1,12 @@
 /**
  * Nmap Intelligence Search & Interactive Scan Builder
- * Main Application Orchestrator
+ * Main Application Orchestrator (English Interface)
  */
 
 import { NMAP_COMMANDS } from './data/nmapCommands.js';
 import { CHEAT_SHEET_DATA } from './data/cheatSheetData.js';
 import { TIMING_DATA } from './data/timingData.js';
 import { BIBLIOGRAPHY_DATA } from './data/bibliographyData.js';
-import { I18N_DICTIONARY } from './data/i18n.js';
 
 import { performFuzzySearch } from './modules/fuzzySearch.js';
 import { CommandCustomizer } from './modules/customizer.js';
@@ -29,7 +28,6 @@ const recentSearchMgr = new RecentSearchManager();
 let currentCategory = "all";
 let currentQuery = "";
 let selectedSimulatorCmd = null;
-let currentLang = localStorage.getItem("nmap_app_lang") || "tr";
 let currentTheme = localStorage.getItem("nmap_app_theme") || "dark";
 
 // DOM Elements
@@ -38,7 +36,6 @@ let searchInput, btnClearSearch, commandCardsGrid, resultsCount;
 document.addEventListener("DOMContentLoaded", () => {
   initDOM();
   setupThemeSwitcher();
-  setupLanguageSwitcher();
   setupNavigationTabs();
   setupCustomizerControls();
   setupSearchEvents();
@@ -87,78 +84,6 @@ function setupThemeSwitcher() {
   });
 
   applyTheme();
-}
-
-/* ==================== 5-LANGUAGES SWITCHER ==================== */
-function setupLanguageSwitcher() {
-  const selectLang = document.getElementById("selectLang");
-  if (!selectLang) return;
-
-  selectLang.value = currentLang;
-
-  const updateLangUI = () => {
-    const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
-    
-    if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
-    
-    const discBtn = document.getElementById("textBtnDisclaimer");
-    if (discBtn) discBtn.textContent = dict.btnDisclaimer;
-
-    // Update Navigation Tabs
-    document.querySelectorAll(".nav-tab").forEach(tab => {
-      const tabName = tab.dataset.tab;
-      if (tabName === "search") tab.innerHTML = `<i class="fa-solid fa-magnifying-glass text-cyan-400"></i> ${dict.navSearch}`;
-      else if (tabName === "wizard") tab.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> ${dict.navWizard}`;
-      else if (tabName === "comparator") tab.innerHTML = `<i class="fa-solid fa-code-compare text-purple-400"></i> ${dict.navComparator}`;
-      else if (tabName === "cheatsheet") tab.innerHTML = `<i class="fa-solid fa-table-list text-emerald-400"></i> ${dict.navCheatSheet}`;
-      else if (tabName === "timing") tab.innerHTML = `<i class="fa-solid fa-gauge-high text-rose-400"></i> ${dict.navTiming}`;
-    });
-
-    // Update Hero text
-    const heroDesc = document.getElementById("textHeroDesc");
-    if (heroDesc) heroDesc.textContent = dict.heroDesc;
-
-    // Update Customizer labels
-    const customizerTitle = document.getElementById("textCustomizerTitle");
-    if (customizerTitle) customizerTitle.textContent = dict.customizerTitle;
-
-    const customizerSub = document.getElementById("textCustomizerSub");
-    if (customizerSub) customizerSub.textContent = dict.customizerSub;
-
-    const recentLabel = document.getElementById("textRecentLabel");
-    if (recentLabel) recentLabel.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> ${dict.recentLabel}`;
-
-    const quickTagsLabel = document.getElementById("textQuickTagsLabel");
-    if (quickTagsLabel) quickTagsLabel.textContent = dict.quickTagsLabel;
-
-    // Update Category Pills Text
-    document.querySelectorAll(".cat-pill").forEach(pill => {
-      const cat = pill.dataset.cat;
-      if (cat === "all") pill.innerHTML = `${dict.catAll} (<span id="countAll">${NMAP_COMMANDS.length}</span>)`;
-      else if (cat === "discovery") pill.innerHTML = `🔍 ${dict.catDiscovery}`;
-      else if (cat === "port_scan") pill.innerHTML = `🔌 ${dict.catPortScan}`;
-      else if (cat === "service_os") pill.innerHTML = `🛠️ ${dict.catServiceOs}`;
-      else if (cat === "vuln_scripts") pill.innerHTML = `🛡️ ${dict.catVulnScripts}`;
-      else if (cat === "evasion") pill.innerHTML = `🥷 ${dict.catEvasion}`;
-      else if (cat === "favorites") pill.innerHTML = `⭐ ${dict.catFavorites} (<span id="countFavorites">${favoritesMgr.getFavoriteIds().length}</span>)`;
-    });
-
-    // Re-render components across all tabs
-    renderCommands();
-    setupWizard();
-    setupComparator();
-    setupCheatSheet();
-    setupTimingGuide();
-    setupBibliography();
-  };
-
-  selectLang.addEventListener("change", (e) => {
-    currentLang = e.target.value;
-    localStorage.setItem("nmap_app_lang", currentLang);
-    updateLangUI();
-  });
-
-  updateLangUI();
 }
 
 /* ==================== NAVIGATION TABS ==================== */
@@ -337,10 +262,9 @@ function updateCategoryCounts() {
   if (countFavorites) countFavorites.textContent = favoritesMgr.getFavoriteIds().length;
 }
 
-/* ==================== RENDER STREAMLINED COMMAND CARDS ==================== */
+/* ==================== RENDER COMMAND CARDS ==================== */
 function renderCommands() {
   if (!commandCardsGrid) return;
-  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
 
   // 1. Fuzzy Search Filtering
   let searchResults = performFuzzySearch(NMAP_COMMANDS, currentQuery);
@@ -360,8 +284,8 @@ function renderCommands() {
     commandCardsGrid.innerHTML = `
       <div class="col-span-full py-12 text-center bg-slate-900/40 rounded-2xl border border-slate-800 space-y-3">
         <i class="fa-solid fa-ghost text-4xl text-slate-600"></i>
-        <h3 class="font-bold text-slate-300">${dict.noResultsTitle}</h3>
-        <p class="text-xs text-slate-500">${dict.noResultsSub}</p>
+        <h3 class="font-bold text-slate-300">No Matching Commands Found</h3>
+        <p class="text-xs text-slate-500">Try modifying your search term or click one of the quick tags above.</p>
       </div>
     `;
     return;
@@ -381,7 +305,7 @@ function renderCommands() {
               ${getCategoryLabel(command.category)}
             </span>
             
-            <button class="btn-fav hover:scale-110 transition text-amber-400 text-sm" data-id="${command.id}" title="Favoriye Ekle">
+            <button class="btn-fav hover:scale-110 transition text-amber-400 text-sm" data-id="${command.id}" title="Bookmark Command">
               <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-star"></i>
             </button>
           </div>
@@ -393,17 +317,17 @@ function renderCommands() {
         <!-- Live Code Block with Quick Copy -->
         <div class="cmd-code-block p-3 text-xs font-mono text-emerald-400 break-all flex items-center justify-between gap-2">
           <span class="select-all">${escapeHtml(liveCmdStr)}</span>
-          <button class="btn-copy-cmd p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition shrink-0" data-cmd="${escapeHtml(liveCmdStr)}" title="Kopyala">
+          <button class="btn-copy-cmd p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded transition shrink-0" data-cmd="${escapeHtml(liveCmdStr)}" title="Copy to Clipboard">
             <i class="fa-solid fa-copy"></i>
           </button>
         </div>
 
-        <!-- Streamlined Single Action Button: Details & Simulator -->
+        <!-- Single Action Button: Details & Simulator -->
         <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between">
           <span class="text-[11px] text-slate-500 font-mono">Risk: ${escapeHtml(command.riskLevel)}</span>
 
           <button class="btn-open-sim px-3.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition" data-id="${command.id}">
-            <i class="fa-solid fa-terminal"></i> ${dict.btnDetailsSim}
+            <i class="fa-solid fa-terminal"></i> Details & Simulator
           </button>
         </div>
 
@@ -459,9 +383,9 @@ function setupSimulatorModal() {
     const cmdStr = document.getElementById("simModalCmdStr").textContent;
     navigator.clipboard.writeText(cmdStr);
     const btn = document.getElementById("btnCopySimCmd");
-    btn.innerHTML = `<i class="fa-solid fa-check"></i> Kopyalandı`;
+    btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied`;
     setTimeout(() => {
-      btn.innerHTML = `<i class="fa-solid fa-copy"></i> Kopyala`;
+      btn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy`;
     }, 2000);
   });
 }
@@ -493,11 +417,10 @@ function setupWizard() {
 
   const btnPrev = document.getElementById("btnWizPrev");
   const btnNext = document.getElementById("btnWizNext");
-  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
 
   const updateWizardUI = () => {
     const step = wizard.currentStep;
-    stepLabel.textContent = `${dict.wizStep} ${step} / 4: ${getWizardStepTitle(step)}`;
+    stepLabel.textContent = `Step ${step} / 4: ${getWizardStepTitle(step)}`;
     percentLabel.textContent = `${step * 25}%`;
     progressBar.style.width = `${step * 25}%`;
 
@@ -507,7 +430,7 @@ function setupWizard() {
     });
 
     btnPrev.disabled = (step === 1);
-    btnNext.innerHTML = (step === 4) ? `${dict.wizComplete} <i class="fa-solid fa-check ml-1"></i>` : `${dict.wizNext} <i class="fa-solid fa-arrow-right ml-1"></i>`;
+    btnNext.innerHTML = (step === 4) ? `Complete <i class="fa-solid fa-check ml-1"></i>` : `Next <i class="fa-solid fa-arrow-right ml-1"></i>`;
 
     if (step === 4) {
       const generatedCmd = wizard.generateWizardCommand(customizer.target);
@@ -552,20 +475,19 @@ function setupWizard() {
     const cmdText = document.getElementById("wizResultCmd").textContent;
     navigator.clipboard.writeText(cmdText);
     const btn = document.getElementById("btnWizCopy");
-    btn.innerHTML = `<i class="fa-solid fa-check"></i> ${dict.btnCopied}`;
+    btn.innerHTML = `<i class="fa-solid fa-check"></i> Copied`;
     setTimeout(() => {
-      btn.innerHTML = `<i class="fa-solid fa-copy"></i> ${dict.btnCopy}`;
+      btn.innerHTML = `<i class="fa-solid fa-copy"></i> Copy`;
     }, 2000);
   });
 }
 
 function getWizardStepTitle(step) {
-  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
   switch (step) {
-    case 1: return dict.wizStep1Title;
-    case 2: return dict.wizStep2Title;
-    case 3: return dict.wizStep3Title;
-    case 4: return dict.wizStep4Title;
+    case 1: return "Scanning Objective";
+    case 2: return "Timing & Speed";
+    case 3: return "Port Scope";
+    case 4: return "Generated Command & Demo";
     default: return "";
   }
 }
@@ -622,7 +544,6 @@ function setupCheatSheet() {
 function setupTimingGuide() {
   const grid = document.getElementById("timingCardsGrid");
   if (!grid) return;
-  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
 
   grid.innerHTML = TIMING_DATA.map(t => `
     <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 hover:border-cyan-500/30 transition space-y-3">
@@ -634,13 +555,13 @@ function setupTimingGuide() {
       <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(t.description)}</p>
 
       <div class="space-y-1.5 text-xs pt-2 border-t border-slate-800/80 font-mono">
-        <div class="flex justify-between text-slate-400"><span>${dict.timingDelay}</span> <span class="text-slate-200">${t.delay}</span></div>
-        <div class="flex justify-between text-slate-400"><span>${dict.timingRtt}</span> <span class="text-slate-200">${t.rttTimeout}</span></div>
+        <div class="flex justify-between text-slate-400"><span>Packet Delay:</span> <span class="text-slate-200">${t.delay}</span></div>
+        <div class="flex justify-between text-slate-400"><span>RTT Timeout:</span> <span class="text-slate-200">${t.rttTimeout}</span></div>
       </div>
 
       <div class="pt-2 text-xs space-y-1">
-        <div class="text-emerald-400"><strong>${dict.timingPros}</strong> ${escapeHtml(t.pros)}</div>
-        <div class="text-rose-400"><strong>${dict.timingCons}</strong> ${escapeHtml(t.cons)}</div>
+        <div class="text-emerald-400"><strong>Pros:</strong> ${escapeHtml(t.pros)}</div>
+        <div class="text-rose-400"><strong>Cons:</strong> ${escapeHtml(t.cons)}</div>
       </div>
     </div>
   `).join('');
@@ -668,11 +589,11 @@ function setupBibliography() {
       <div class="flex items-start justify-between gap-2">
         <h4 class="font-bold text-slate-200 text-xs">${escapeHtml(item.title)}</h4>
         <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 rounded text-[10px] font-mono shrink-0 transition">
-          Doküman <i class="fa-solid fa-external-link ml-0.5"></i>
+          Doc Link <i class="fa-solid fa-external-link ml-0.5"></i>
         </a>
       </div>
       <p class="text-[11px] text-slate-400">${escapeHtml(item.description)}</p>
-      <div class="text-[10px] text-slate-500 font-mono">Yazar: ${escapeHtml(item.author)} (${item.year})</div>
+      <div class="text-[10px] text-slate-500 font-mono">Author: ${escapeHtml(item.author)} (${item.year})</div>
     </div>
   `).join('');
 }
@@ -724,19 +645,18 @@ function openPingCheckModal() {
   const rec = document.getElementById("pingRecommendation");
 
   modal.classList.remove("hidden");
-  runPingSimulation(targetIpStr, container, badge, rec, currentLang);
+  runPingSimulation(targetIpStr, container, badge, rec, "en");
 }
 
 /* ==================== HELPER FUNCTIONS ==================== */
 function getCategoryLabel(cat) {
-  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
   switch (cat) {
-    case "discovery": return dict.catDiscovery;
-    case "port_scan": return dict.catPortScan;
-    case "service_os": return dict.catServiceOs;
-    case "vuln_scripts": return dict.catVulnScripts;
-    case "evasion": return dict.catEvasion;
-    case "advanced": return dict.catAll;
+    case "discovery": return "Host Discovery";
+    case "port_scan": return "Port Scanning";
+    case "service_os": return "Service & OS";
+    case "vuln_scripts": return "Vulnerability (NSE)";
+    case "evasion": return "Firewall Evasion";
+    case "advanced": return "Aggressive / Advanced";
     default: return cat;
   }
 }
