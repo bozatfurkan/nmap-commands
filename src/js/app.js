@@ -28,14 +28,12 @@ const recentSearchMgr = new RecentSearchManager();
 let currentCategory = "all";
 let currentQuery = "";
 let selectedSimulatorCmd = null;
-let currentTheme = localStorage.getItem("nmap_app_theme") || "dark";
 
 // DOM Elements
 let searchInput, btnClearSearch, commandCardsGrid, resultsCount;
 
 document.addEventListener("DOMContentLoaded", () => {
   initDOM();
-  setupThemeSwitcher();
   setupNavigationTabs();
   setupCustomizerControls();
   setupSearchEvents();
@@ -57,33 +55,6 @@ function initDOM() {
   btnClearSearch = document.getElementById("btnClearSearch");
   commandCardsGrid = document.getElementById("commandCardsGrid");
   resultsCount = document.getElementById("resultsCount");
-}
-
-/* ==================== THEME SWITCHER ==================== */
-function setupThemeSwitcher() {
-  const btnThemeToggle = document.getElementById("btnThemeToggle");
-  const themeIcon = document.getElementById("themeIcon");
-  const themeLabel = document.getElementById("themeLabel");
-
-  const applyTheme = () => {
-    if (currentTheme === "light") {
-      document.documentElement.classList.remove("dark");
-      if (themeIcon) themeIcon.className = "fa-solid fa-sun text-amber-500";
-      if (themeLabel) themeLabel.textContent = "Light";
-    } else {
-      document.documentElement.classList.add("dark");
-      if (themeIcon) themeIcon.className = "fa-solid fa-moon text-amber-400";
-      if (themeLabel) themeLabel.textContent = "Dark";
-    }
-  };
-
-  btnThemeToggle?.addEventListener("click", () => {
-    currentTheme = currentTheme === "dark" ? "light" : "dark";
-    localStorage.setItem("nmap_app_theme", currentTheme);
-    applyTheme();
-  });
-
-  applyTheme();
 }
 
 /* ==================== NAVIGATION TABS ==================== */
