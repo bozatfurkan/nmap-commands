@@ -1,5 +1,5 @@
 /**
- * Nmap Intelligence Search & Interactive Command Builder
+ * Nmap Intelligence Search & Interactive Scan Builder
  * Main Application Orchestrator
  */
 
@@ -16,7 +16,6 @@ import { ScenarioWizard } from './modules/wizard.js';
 import { renderCommandComparison } from './modules/comparator.js';
 import { FavoritesManager } from './modules/favorites.js';
 import { exportCommandsToFile } from './modules/exporter.js';
-import { CommunityManager } from './modules/community.js';
 import { runPingSimulation } from './modules/pingCheck.js';
 import { RecentSearchManager } from './modules/recentSearches.js';
 
@@ -24,7 +23,6 @@ import { RecentSearchManager } from './modules/recentSearches.js';
 const customizer = new CommandCustomizer();
 const favoritesMgr = new FavoritesManager();
 const wizard = new ScenarioWizard();
-const communityMgr = new CommunityManager();
 const recentSearchMgr = new RecentSearchManager();
 
 // App State
@@ -53,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupBibliography();
   setupExportButtons();
   setupModals();
-  setupCommunityModal();
 
   renderCommands();
 });
@@ -92,7 +89,7 @@ function setupThemeSwitcher() {
   applyTheme();
 }
 
-/* ==================== 10-LANGUAGES SWITCHER ==================== */
+/* ==================== 5-LANGUAGES SWITCHER ==================== */
 function setupLanguageSwitcher() {
   const selectLang = document.getElementById("selectLang");
   if (!selectLang) return;
@@ -104,9 +101,6 @@ function setupLanguageSwitcher() {
     
     if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
     
-    const commBtn = document.getElementById("textBtnCommunity");
-    if (commBtn) commBtn.textContent = dict.btnCommunity;
-
     const discBtn = document.getElementById("textBtnDisclaimer");
     if (discBtn) discBtn.textContent = dict.btnDisclaimer;
 
@@ -130,6 +124,12 @@ function setupLanguageSwitcher() {
 
     const customizerSub = document.getElementById("textCustomizerSub");
     if (customizerSub) customizerSub.textContent = dict.customizerSub;
+
+    const recentLabel = document.getElementById("textRecentLabel");
+    if (recentLabel) recentLabel.innerHTML = `<i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> ${dict.recentLabel}`;
+
+    const quickTagsLabel = document.getElementById("textQuickTagsLabel");
+    if (quickTagsLabel) quickTagsLabel.textContent = dict.quickTagsLabel;
 
     // Update Category Pills Text
     document.querySelectorAll(".cat-pill").forEach(pill => {
@@ -337,9 +337,10 @@ function updateCategoryCounts() {
   if (countFavorites) countFavorites.textContent = favoritesMgr.getFavoriteIds().length;
 }
 
-/* ==================== RENDER COMMAND CARDS ==================== */
+/* ==================== RENDER STREAMLINED COMMAND CARDS ==================== */
 function renderCommands() {
   if (!commandCardsGrid) return;
+  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
 
   // 1. Fuzzy Search Filtering
   let searchResults = performFuzzySearch(NMAP_COMMANDS, currentQuery);
@@ -359,14 +360,14 @@ function renderCommands() {
     commandCardsGrid.innerHTML = `
       <div class="col-span-full py-12 text-center bg-slate-900/40 rounded-2xl border border-slate-800 space-y-3">
         <i class="fa-solid fa-ghost text-4xl text-slate-600"></i>
-        <h3 class="font-bold text-slate-300">Eşleşen Komut Bulunamadı</h3>
-        <p class="text-xs text-slate-500">Arama terimini değiştirebilir veya yukarıdaki hızlı arama etiketlerini deneyebilirsiniz.</p>
+        <h3 class="font-bold text-slate-300">${dict.noResultsTitle}</h3>
+        <p class="text-xs text-slate-500">${dict.noResultsSub}</p>
       </div>
     `;
     return;
   }
 
-  commandCardsGrid.innerHTML = searchResults.map(({ command, score }) => {
+  commandCardsGrid.innerHTML = searchResults.map(({ command }) => {
     const liveCmdStr = customizer.buildCustomCommand(command);
     const isFav = favoritesMgr.isFavorite(command.id);
 
@@ -380,7 +381,7 @@ function renderCommands() {
               ${getCategoryLabel(command.category)}
             </span>
             
-            <button class="btn-fav hover:scale-110 transition text-amber-400 text-sm" data-id="${command.id}" title="Favorilere Ekle">
+            <button class="btn-fav hover:scale-110 transition text-amber-400 text-sm" data-id="${command.id}" title="Favoriye Ekle">
               <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-star"></i>
             </button>
           </div>
@@ -397,12 +398,12 @@ function renderCommands() {
           </button>
         </div>
 
-        <!-- Single Action Button: Details & Simulator -->
+        <!-- Streamlined Single Action Button: Details & Simulator -->
         <div class="pt-2 border-t border-slate-800/60 flex items-center justify-between">
           <span class="text-[11px] text-slate-500 font-mono">Risk: ${escapeHtml(command.riskLevel)}</span>
 
           <button class="btn-open-sim px-3.5 py-1.5 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition" data-id="${command.id}">
-            <i class="fa-solid fa-terminal"></i> Detay & Simülatör
+            <i class="fa-solid fa-terminal"></i> ${dict.btnDetailsSim}
           </button>
         </div>
 
@@ -492,10 +493,11 @@ function setupWizard() {
 
   const btnPrev = document.getElementById("btnWizPrev");
   const btnNext = document.getElementById("btnWizNext");
+  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
 
   const updateWizardUI = () => {
     const step = wizard.currentStep;
-    stepLabel.textContent = `Adım ${step} / 4: ${getWizardStepTitle(step)}`;
+    stepLabel.textContent = `${dict.wizStep} ${step} / 4: ${getWizardStepTitle(step)}`;
     percentLabel.textContent = `${step * 25}%`;
     progressBar.style.width = `${step * 25}%`;
 
@@ -505,7 +507,7 @@ function setupWizard() {
     });
 
     btnPrev.disabled = (step === 1);
-    btnNext.innerHTML = (step === 4) ? `Tamamla <i class="fa-solid fa-check ml-1"></i>` : `İleri <i class="fa-solid fa-arrow-right ml-1"></i>`;
+    btnNext.innerHTML = (step === 4) ? `${dict.wizComplete} <i class="fa-solid fa-check ml-1"></i>` : `${dict.wizNext} <i class="fa-solid fa-arrow-right ml-1"></i>`;
 
     if (step === 4) {
       const generatedCmd = wizard.generateWizardCommand(customizer.target);
@@ -550,19 +552,20 @@ function setupWizard() {
     const cmdText = document.getElementById("wizResultCmd").textContent;
     navigator.clipboard.writeText(cmdText);
     const btn = document.getElementById("btnWizCopy");
-    btn.innerHTML = `<i class="fa-solid fa-check"></i> Kopyalandı`;
+    btn.innerHTML = `<i class="fa-solid fa-check"></i> ${dict.btnCopied}`;
     setTimeout(() => {
-      btn.innerHTML = `<i class="fa-solid fa-copy"></i> Kopyala`;
+      btn.innerHTML = `<i class="fa-solid fa-copy"></i> ${dict.btnCopy}`;
     }, 2000);
   });
 }
 
 function getWizardStepTitle(step) {
+  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
   switch (step) {
-    case 1: return "Tarama Amacı";
-    case 2: return "Zamanlama & Hız";
-    case 3: return "Port Kapsamı";
-    case 4: return "Oluşturulan Komut & Demo";
+    case 1: return dict.wizStep1Title;
+    case 2: return dict.wizStep2Title;
+    case 3: return dict.wizStep3Title;
+    case 4: return dict.wizStep4Title;
     default: return "";
   }
 }
@@ -619,6 +622,7 @@ function setupCheatSheet() {
 function setupTimingGuide() {
   const grid = document.getElementById("timingCardsGrid");
   if (!grid) return;
+  const dict = I18N_DICTIONARY[currentLang] || I18N_DICTIONARY.tr;
 
   grid.innerHTML = TIMING_DATA.map(t => `
     <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 hover:border-cyan-500/30 transition space-y-3">
@@ -630,13 +634,13 @@ function setupTimingGuide() {
       <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(t.description)}</p>
 
       <div class="space-y-1.5 text-xs pt-2 border-t border-slate-800/80 font-mono">
-        <div class="flex justify-between text-slate-400"><span>Packet Delay:</span> <span class="text-slate-200">${t.delay}</span></div>
-        <div class="flex justify-between text-slate-400"><span>RTT Timeout:</span> <span class="text-slate-200">${t.rttTimeout}</span></div>
+        <div class="flex justify-between text-slate-400"><span>${dict.timingDelay}</span> <span class="text-slate-200">${t.delay}</span></div>
+        <div class="flex justify-between text-slate-400"><span>${dict.timingRtt}</span> <span class="text-slate-200">${t.rttTimeout}</span></div>
       </div>
 
       <div class="pt-2 text-xs space-y-1">
-        <div class="text-emerald-400"><strong>Avantajlar:</strong> ${escapeHtml(t.pros)}</div>
-        <div class="text-rose-400"><strong>Dezavantajlar:</strong> ${escapeHtml(t.cons)}</div>
+        <div class="text-emerald-400"><strong>${dict.timingPros}</strong> ${escapeHtml(t.pros)}</div>
+        <div class="text-rose-400"><strong>${dict.timingCons}</strong> ${escapeHtml(t.cons)}</div>
       </div>
     </div>
   `).join('');
@@ -721,50 +725,6 @@ function openPingCheckModal() {
 
   modal.classList.remove("hidden");
   runPingSimulation(targetIpStr, container, badge, rec, currentLang);
-}
-
-/* ==================== COMMUNITY MODAL ==================== */
-function setupCommunityModal() {
-  const modal = document.getElementById("modalCommunity");
-  const form = document.getElementById("formCommunity");
-
-  document.getElementById("btnCommunityModal")?.addEventListener("click", () => {
-    renderCommunityRecipes();
-    modal?.classList.remove("hidden");
-  });
-
-  document.getElementById("btnCloseCommunity")?.addEventListener("click", () => {
-    modal?.classList.add("hidden");
-  });
-
-  form?.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const title = document.getElementById("commTitle").value;
-    const author = document.getElementById("commAuthor").value;
-    const cmd = document.getElementById("commCommand").value;
-    const desc = document.getElementById("commDesc").value;
-
-    communityMgr.addRecipe(title, author, cmd, desc);
-    form.reset();
-    renderCommunityRecipes();
-  });
-}
-
-function renderCommunityRecipes() {
-  const list = document.getElementById("communityRecipesList");
-  if (!list) return;
-
-  const recipes = communityMgr.getRecipes();
-  list.innerHTML = recipes.map(r => `
-    <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-1">
-      <div class="flex items-center justify-between text-xs">
-        <span class="font-bold text-cyan-400">${escapeHtml(r.title)}</span>
-        <span class="text-slate-500 font-mono">Rumuz: ${escapeHtml(r.author)}</span>
-      </div>
-      <code class="block font-mono text-emerald-400 bg-slate-900 p-1.5 rounded text-[11px] break-all">${escapeHtml(r.command)}</code>
-      <p class="text-slate-400 text-[11px]">${escapeHtml(r.description)}</p>
-    </div>
-  `).join('');
 }
 
 /* ==================== HELPER FUNCTIONS ==================== */

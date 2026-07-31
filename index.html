@@ -79,25 +79,17 @@
           <i class="fa-solid fa-moon text-xs" id="themeIcon"></i> <span id="themeLabel" class="hidden sm:inline">Dark</span>
         </button>
         
-        <!-- 10-Language Selector Dropdown -->
+        <!-- 5-Language Selector Dropdown -->
         <div class="relative">
-          <select id="selectLang" class="px-2 py-1.5 bg-slate-900 text-cyan-400 border border-cyan-500/30 rounded-lg text-xs font-bold font-mono cursor-pointer focus:outline-none focus:ring-1 focus:ring-cyan-500 transition">
+          <select id="selectLang" class="px-2.5 py-1.5 bg-slate-900 text-cyan-400 border border-cyan-500/30 rounded-lg text-xs font-bold font-mono cursor-pointer focus:outline-none focus:ring-1 focus:ring-cyan-500 transition">
             <option value="tr" selected>🇹🇷 Türkçe</option>
+            <option value="ku">☀️ Kurdî</option>
             <option value="en">🇬🇧 English</option>
-            <option value="de">🇩🇪 Deutsch</option>
-            <option value="fr">🇫🇷 Français</option>
-            <option value="es">🇪🇸 Español</option>
-            <option value="it">🇮🇹 Italiano</option>
-            <option value="pt">🇵🇹 Português</option>
-            <option value="ru">🇷🇺 Русский</option>
             <option value="zh">🇨🇳 中文</option>
             <option value="ja">🇯🇵 日本語</option>
           </select>
         </div>
 
-        <button id="btnCommunityModal" class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-cyan-400 border border-slate-800 rounded-lg text-xs font-medium flex items-center gap-2 transition">
-          <i class="fa-solid fa-users text-cyan-400"></i> <span class="hidden sm:inline" id="textBtnCommunity">Topluluk</span>
-        </button>
         <button id="btnDisclaimerModal" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
           <i class="fa-solid fa-triangle-exclamation"></i> <span class="hidden sm:inline" id="textBtnDisclaimer">Etik Kullanım</span>
         </button>
@@ -155,7 +147,7 @@
 
           <!-- Recent Searches History Bar -->
           <div id="recentSearchesBar" class="flex flex-wrap items-center gap-2 pt-2 text-xs">
-            <span class="text-slate-400 font-semibold flex items-center gap-1">
+            <span class="text-slate-400 font-semibold flex items-center gap-1" id="textRecentLabel">
               <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> Son Aramalar:
             </span>
             <div id="recentTagsContainer" class="flex flex-wrap items-center gap-1.5">
@@ -311,7 +303,7 @@
         </div>
       </div>
 
-      <!-- COMMAND CARDS RESULTS GRID -->
+      <!-- COMMAND CARDS RESULTS GRID (STREAMLINED & DECLUTTERED) -->
       <div id="commandCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Dynamic Cards Inserted Here via JS -->
       </div>
@@ -483,11 +475,11 @@
         <!-- Select Selectors -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs max-w-4xl mx-auto">
           <div>
-            <label for="selectCmdA" class="block font-semibold text-cyan-400 mb-1">Komut A Seçin:</label>
+            <label for="selectCmdA" class="block font-semibold text-cyan-400 mb-1" id="textCompCmdA">Komut A Seçin:</label>
             <select id="selectCmdA" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 font-mono text-xs focus:border-cyan-500 focus:outline-none"></select>
           </div>
           <div>
-            <label for="selectCmdB" class="block font-semibold text-purple-400 mb-1">Komut B Seçin:</label>
+            <label for="selectCmdB" class="block font-semibold text-purple-400 mb-1" id="textCompCmdB">Komut B Seçin:</label>
             <select id="selectCmdB" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 font-mono text-xs focus:border-purple-500 focus:outline-none"></select>
           </div>
         </div>
@@ -515,11 +507,11 @@
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-950 text-slate-400 uppercase font-mono font-bold border-b border-slate-800">
               <tr>
-                <th class="p-3.5">Bayrak</th>
-                <th class="p-3.5">Adı & Kategori</th>
-                <th class="p-3.5">Açıklama</th>
-                <th class="p-3.5">Örnek Sözdizimi</th>
-                <th class="p-3.5">Ağ Etkisi</th>
+                <th class="p-3.5" id="textCsColFlag">Bayrak</th>
+                <th class="p-3.5" id="textCsColNameCat">Adı & Kategori</th>
+                <th class="p-3.5" id="textCsColDesc">Açıklama</th>
+                <th class="p-3.5" id="textCsColExample">Örnek Sözdizimi</th>
+                <th class="p-3.5" id="textCsColImpact">Ağ Etkisi</th>
               </tr>
             </thead>
             <tbody id="cheatSheetTableBody" class="divide-y divide-slate-800/60">
@@ -634,48 +626,9 @@
       </p>
 
       <div class="pt-2 flex justify-end">
-        <button id="btnConfirmDisclaimer" class="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded-xl text-xs transition">
+        <button id="btnConfirmDisclaimer" class="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded-xl text-xs transition" id="textDisclaimerBtn">
           Anladım ve Kabul Ediyorum
         </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== MODAL: COMMUNITY ==================== -->
-  <div id="modalCommunity" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
-    <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-white text-lg">Topluluk Komut Öneri Sistemi</h3>
-        <button id="btnCloseCommunity" class="text-slate-400 hover:text-slate-200">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <form id="formCommunity" class="space-y-4 text-xs">
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Başlık / Senaryo Adı:</label>
-          <input type="text" id="commTitle" required class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Adınız / Rumuz:</label>
-          <input type="text" id="commAuthor" required class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Nmap Komut Sözdizimi:</label>
-          <input type="text" id="commCommand" required class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg font-mono text-emerald-400">
-        </div>
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Açıklama & Amaç:</label>
-          <textarea id="commDesc" required rows="2" class="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-slate-100"></textarea>
-        </div>
-        <button type="submit" class="w-full py-2.5 bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold rounded-xl text-xs transition">
-          Öneriyi Yayınla
-        </button>
-      </form>
-
-      <div class="space-y-3 pt-4 border-t border-slate-800">
-        <h4 class="font-bold text-white text-sm">Topluluk Tarafından Paylaşılanlar</h4>
-        <div id="communityRecipesList" class="space-y-3"></div>
       </div>
     </div>
   </div>
