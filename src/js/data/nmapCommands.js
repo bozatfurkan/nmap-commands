@@ -1,10 +1,10 @@
 /**
- * Comprehensive 100 Real-World Nmap Commands Dataset
+ * Comprehensive 100 Real-World Nmap Commands Dataset (100% English)
  * Categories: discovery, port_scan, service_os, vuln_scripts, evasion, advanced
  */
 
 export const NMAP_COMMANDS = [
-  // ==================== 1. HOST DISCOVERY (15 COMMANDS) ====================
+  // ==================== 1. HOST DISCOVERY (18 COMMANDS) ====================
   {
     id: "cmd_disc_ping_sweep",
     name: "Subnet Ping Sweep",
@@ -170,8 +170,41 @@ export const NMAP_COMMANDS = [
     keywords: ["dns servers", "custom dns", "cloudflare dns"],
     flagExplanations: { "--dns-servers": "Specifies custom DNS servers." }
   },
+  {
+    id: "cmd_disc_list_scan",
+    name: "List Scan (Targets Without Probing)",
+    category: "discovery",
+    commandPattern: "nmap -sL {target}",
+    description: "Simply lists target IP addresses and resolves hostnames without sending packets.",
+    whenToUse: "Verifying target IP ranges before launching active pentest scans.",
+    speedLevel: 5, stealthLevel: 5, riskLevel: "Low",
+    keywords: ["list scan", "sl", "target verification"],
+    flagExplanations: { "-sL": "List scan: simply prints targets." }
+  },
+  {
+    id: "cmd_disc_random_targets",
+    name: "Random Public IP Host Discovery",
+    category: "discovery",
+    commandPattern: "nmap -iR 100 -sn {timing}",
+    description: "Generates 100 random public IP targets for internet-wide research probing.",
+    whenToUse: "Global Internet security statistics and research sampling.",
+    speedLevel: 4, stealthLevel: 3, riskLevel: "Low",
+    keywords: ["ir", "random targets", "internet sweep"],
+    flagExplanations: { "-iR 100": "Chooses 100 random public Internet targets." }
+  },
+  {
+    id: "cmd_disc_exclude_ip",
+    name: "Exclude IP Range From Subnet Discovery",
+    category: "discovery",
+    commandPattern: "nmap 192.168.1.0/24 --exclude 192.168.1.1,192.168.1.254 -sn",
+    description: "Discovers active hosts while excluding sensitive gateway or firewall IP addresses.",
+    whenToUse: "Protecting critical infrastructure gateways during broad subnet sweeps.",
+    speedLevel: 5, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["exclude ip", "skip gateway"],
+    flagExplanations: { "--exclude": "Excludes specified IP addresses from target list." }
+  },
 
-  // ==================== 2. PORT SCANNING (20 COMMANDS) ====================
+  // ==================== 2. PORT SCANNING (22 COMMANDS) ====================
   {
     id: "cmd_scan_syn_stealth",
     name: "TCP SYN Stealth Scan",
@@ -392,8 +425,30 @@ export const NMAP_COMMANDS = [
     keywords: ["exclude ports", "skip ports"],
     flagExplanations: { "--exclude-ports 80,443": "Excludes specified ports." }
   },
+  {
+    id: "cmd_scan_specific_ports",
+    name: "Specific TCP Port Range Scan",
+    category: "port_scan",
+    commandPattern: "nmap -p 22,80,443,3389 {timing} {target}",
+    description: "Scans specified list of critical infrastructure ports (SSH, HTTP, HTTPS, RDP).",
+    whenToUse: "Targeted service validation on server instances.",
+    speedLevel: 5, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["specific ports", "ssh", "rdp", "http"],
+    flagExplanations: { "-p 22,80,443,3389": "Explicit target ports list." }
+  },
+  {
+    id: "cmd_scan_port_ratio",
+    name: "Port Ratio Frequent Range Scan",
+    category: "port_scan",
+    commandPattern: "nmap --port-ratio 0.2 {timing} {target}",
+    description: "Scans all ports with a frequency ratio greater than specified threshold (0.2).",
+    whenToUse: "Dynamic top-port filtering based on Nmap services database statistics.",
+    speedLevel: 4, stealthLevel: 3, riskLevel: "Low",
+    keywords: ["port ratio", "frequency scan"],
+    flagExplanations: { "--port-ratio 0.2": "Scans ports with frequency ratio > 0.2." }
+  },
 
-  // ==================== 3. SERVICE & OS DETECTION (15 COMMANDS) ====================
+  // ==================== 3. SERVICE & OS DETECTION (16 COMMANDS) ====================
   {
     id: "cmd_serv_version_standard",
     name: "Service Version Fingerprinting",
@@ -482,8 +537,96 @@ export const NMAP_COMMANDS = [
     keywords: ["osscan-guess", "fuzzy os"],
     flagExplanations: { "--osscan-guess": "Forces aggressive OS matching." }
   },
+  {
+    id: "cmd_serv_max_tries",
+    name: "Set Maximum OS Probe Retries",
+    category: "service_os",
+    commandPattern: "nmap -O --max-os-tries 2 {timing} {target}",
+    description: "Limits maximum OS fingerprint retry probes to 2 to speed up scanning.",
+    whenToUse: "Preventing long timeouts on lossy or slow networks during OS fingerprinting.",
+    speedLevel: 4, stealthLevel: 3, riskLevel: "Low",
+    keywords: ["max os tries", "os retries"],
+    flagExplanations: { "--max-os-tries 2": "Limits OS detection probe attempts to 2." }
+  },
+  {
+    id: "cmd_serv_banner_grab",
+    name: "Simple Service Banner Grab Probe",
+    category: "service_os",
+    commandPattern: "nmap -sV --script=banner {timing} {target}",
+    description: "Grabs raw connection banners emitted by SSH, FTP, SMTP, and Telnet services.",
+    whenToUse: "Quickly logging software version strings without intrusive probes.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["banner grab", "raw banner", "smtp banner"],
+    flagExplanations: { "--script=banner": "Connects and records initial raw banner." }
+  },
+  {
+    id: "cmd_serv_rpc_info",
+    name: "RPC Service & Program Enumeration",
+    category: "service_os",
+    commandPattern: "nmap -sV -sR {timing} {target}",
+    description: "Probes RPC services (portmapper, NFS, NIS) to enumerate RPC program numbers.",
+    whenToUse: "Auditing UNIX/Linux NFS network file systems.",
+    speedLevel: 3, stealthLevel: 3, riskLevel: "Low",
+    keywords: ["rpcinfo", "nfs", "portmapper", "sR"],
+    flagExplanations: { "-sR": "Enables SunRPC program detection." }
+  },
+  {
+    id: "cmd_serv_ssl_cert",
+    name: "TLS/SSL Certificate Info Extraction",
+    category: "service_os",
+    commandPattern: "nmap -p 443 --script=ssl-cert {target}",
+    description: "Extracts SSL/TLS X.509 certificate subject, SAN domains, issuer, and expiry date.",
+    whenToUse: "Reconnaissance to discover hidden subdomains listed in SAN SSL certificates.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["ssl cert", "x509", "san domain", "tls cert"],
+    flagExplanations: { "--script=ssl-cert": "Parses and displays SSL certificate details." }
+  },
+  {
+    id: "cmd_serv_sshd_config",
+    name: "SSH Server Algorithms & Keys Audit",
+    category: "service_os",
+    commandPattern: "nmap -p 22 --script=ssh2-enum-algos {target}",
+    description: "Enumerates supported SSH encryption algorithms, kex algorithms, and MACs.",
+    whenToUse: "Hardening SSH server configurations against weak cryptographic ciphers.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["ssh algos", "ssh kex", "ssh encryption"],
+    flagExplanations: { "--script=ssh2-enum-algos": "Lists SSH server cryptographic capabilities." }
+  },
+  {
+    id: "cmd_serv_http_headers",
+    name: "HTTP Server Headers Fingerprint",
+    category: "service_os",
+    commandPattern: "nmap -p 80,443 --script=http-headers {target}",
+    description: "Fetches and displays HTTP response headers (Server, X-Powered-By, Security headers).",
+    whenToUse: "Auditing web server technology stack and missing security headers.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["http headers", "x-powered-by", "web server banner"],
+    flagExplanations: { "--script=http-headers": "Prints HTTP GET response headers." }
+  },
+  {
+    id: "cmd_serv_smb_os",
+    name: "SMB Windows OS & Domain Name Probe",
+    category: "service_os",
+    commandPattern: "nmap -p 445 --script=smb-os-discovery {target}",
+    description: "Queries SMB protocol to extract exact Windows OS build, Domain name, and NetBIOS name.",
+    whenToUse: "Reconnaissance of Active Directory domain controllers and Windows servers.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["smb os", "netbios name", "windows domain"],
+    flagExplanations: { "--script=smb-os-discovery": "Queries SMB OS fingerprint metadata." }
+  },
+  {
+    id: "cmd_serv_snmp_sysdescr",
+    name: "SNMP System Description Fingerprint",
+    category: "service_os",
+    commandPattern: "nmap -sU -p 161 --script=snmp-info {target}",
+    description: "Queries SNMP community string 'public' to fetch router/switch OS description.",
+    whenToUse: "Auditing network routers, switches, and printers.",
+    speedLevel: 4, stealthLevel: 3, riskLevel: "Low",
+    keywords: ["snmp info", "sysdescr", "router os"],
+    flagExplanations: { "--script=snmp-info": "Queries SNMP sysDescr metadata." }
+  },
 
-  // ==================== 4. VULNERABILITY SCRIPTS NSE (20 COMMANDS) ====================
+  // ==================== 4. VULNERABILITY SCRIPTS NSE (22 COMMANDS) ====================
   {
     id: "cmd_nse_vuln_engine",
     name: "NSE Vulnerability Audit Engine",
@@ -594,8 +737,140 @@ export const NMAP_COMMANDS = [
     keywords: ["smb shares", "windows shares", "smb users"],
     flagExplanations: { "--script=smb-enum-shares,smb-enum-users": "Lists active SMB shares and users." }
   },
+  {
+    id: "cmd_nse_shellshock",
+    name: "GNU Bash Shellshock RCE Audit",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 80,443 --script=http-shellshock {target}",
+    description: "Audits CGI web servers for GNU Bash Shellshock Remote Code Execution (CVE-2014-6271).",
+    whenToUse: "Assessing Linux web servers executing CGI shell scripts.",
+    speedLevel: 4, stealthLevel: 3, riskLevel: "High",
+    keywords: ["shellshock", "cve-2014-6271", "cgi rce"],
+    flagExplanations: { "--script=http-shellshock": "Sends HTTP header payload testing Shellshock." }
+  },
+  {
+    id: "cmd_nse_http_sql_injection",
+    name: "HTTP SQL Injection Vulnerability Scanner",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 80,443 --script=http-sql-injection {target}",
+    description: "Spiders target web application to discover SQL injection entry points in forms and GET parameters.",
+    whenToUse: "Web application vulnerability scanning for SQL injection flaws.",
+    speedLevel: 2, stealthLevel: 1, riskLevel: "High",
+    keywords: ["sql injection", "sqli", "http-sql-injection"],
+    flagExplanations: { "--script=http-sql-injection": "Spiders and injects test SQL payloads." }
+  },
+  {
+    id: "cmd_nse_rdp_ms12_020",
+    name: "RDP BlueKeep / MS12-020 Vulnerability Check",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 3389 --script=rdp-vuln-ms12-020 {target}",
+    description: "Audits Windows Remote Desktop Services for MS12-020 Denial of Service vulnerability.",
+    whenToUse: "Assessing RDP servers for remote crash vulnerabilities.",
+    speedLevel: 4, stealthLevel: 3, riskLevel: "High",
+    keywords: ["rdp vuln", "ms12-020", "bluekeep", "cve-2019-0708"],
+    flagExplanations: { "--script=rdp-vuln-ms12-020": "Probes RDP protocol packet structure." }
+  },
+  {
+    id: "cmd_nse_http_wordpress",
+    name: "WordPress Plugins & Themes User Enum",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 80,443 --script=http-wordpress-enum {target}",
+    description: "Enumerates installed WordPress plugins, themes, and usernames.",
+    whenToUse: "Auditing WordPress CMS web applications.",
+    speedLevel: 3, stealthLevel: 2, riskLevel: "Medium",
+    keywords: ["wordpress", "wp enum", "cms audit"],
+    flagExplanations: { "--script=http-wordpress-enum": "Scans WP admin and plugin paths." }
+  },
+  {
+    id: "cmd_nse_smtp_enum_users",
+    name: "SMTP User Account Enumeration",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 25,587 --script=smtp-enum-users {target}",
+    description: "Uses SMTP commands (VRFY, EXPN, RCPT TO) to enumerate valid email accounts.",
+    whenToUse: "Auditing corporate mail servers for user enumeration flaws.",
+    speedLevel: 3, stealthLevel: 3, riskLevel: "Medium",
+    keywords: ["smtp enum", "vrfy", "mail users"],
+    flagExplanations: { "--script=smtp-enum-users": "Sends VRFY/EXPN queries to SMTP server." }
+  },
+  {
+    id: "cmd_nse_snmp_brute",
+    name: "SNMP Community String Password Audit",
+    category: "vuln_scripts",
+    commandPattern: "nmap -sU -p 161 --script=snmp-brute {target}",
+    description: "Bruteforces SNMP community strings (e.g., public, private, manager, cisco).",
+    whenToUse: "Auditing network appliances for default SNMP credentials.",
+    speedLevel: 3, stealthLevel: 2, riskLevel: "High",
+    keywords: ["snmp brute", "community string", "public private"],
+    flagExplanations: { "--script=snmp-brute": "Tests dictionary list of SNMP community strings." }
+  },
+  {
+    id: "cmd_nse_mysql_empty_password",
+    name: "MySQL Empty Root Password Audit",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 3306 --script=mysql-empty-password {target}",
+    description: "Checks if MySQL root or anonymous accounts have blank passwords.",
+    whenToUse: "Auditing database servers for insecure initial setups.",
+    speedLevel: 5, stealthLevel: 4, riskLevel: "High",
+    keywords: ["mysql root", "empty password", "database auth"],
+    flagExplanations: { "--script=mysql-empty-password": "Attempts passwordless login to MySQL." }
+  },
+  {
+    id: "cmd_nse_http_title",
+    name: "HTTP Page Title & Redirect Capture",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 80,443,8080 --script=http-title {target}",
+    description: "Fetches HTML <title> tag text and HTTP redirect location for open web ports.",
+    whenToUse: "Rapidly identifying web applications across hundreds of IP addresses.",
+    speedLevel: 5, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["http title", "web page title", "recon"],
+    flagExplanations: { "--script=http-title": "Extracts HTML page title element." }
+  },
+  {
+    id: "cmd_nse_http_cors",
+    name: "HTTP Misconfigured CORS Origin Audit",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 80,443 --script=http-cors {target}",
+    description: "Checks if web application reflects arbitrary Access-Control-Allow-Origin headers.",
+    whenToUse: "Auditing REST APIs for Cross-Origin Resource Sharing vulnerabilities.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Medium",
+    keywords: ["cors audit", "access-control-allow-origin", "api security"],
+    flagExplanations: { "--script=http-cors": "Sends custom Origin header to test CORS reflection." }
+  },
+  {
+    id: "cmd_nse_ssl_poodle",
+    name: "SSLv3 POODLE Vulnerability Check",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 443 --script=ssl-poodle {target}",
+    description: "Audits HTTPS servers for SSLv3 POODLE vulnerability (CVE-2014-3566).",
+    whenToUse: "Verifying legacy SSLv3 protocol disabling on web gateways.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Medium",
+    keywords: ["poodle", "cve-2014-3566", "sslv3"],
+    flagExplanations: { "--script=ssl-poodle": "Tests CBC cipher suite fallback under SSLv3." }
+  },
+  {
+    id: "cmd_nse_http_methods",
+    name: "HTTP Potentially Dangerous Methods Audit",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 80,443 --script=http-methods {target}",
+    description: "Enumerates supported HTTP methods (PUT, DELETE, TRACE, CONNECT, OPTIONS).",
+    whenToUse: "Identifying insecure web server configurations permitting file uploads.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["http methods", "put delete trace", "options method"],
+    flagExplanations: { "--script=http-methods": "Sends OPTIONS request to list enabled HTTP methods." }
+  },
+  {
+    id: "cmd_nse_smb_doublepulsar",
+    name: "SMB DoublePulsar Backdoor Detection",
+    category: "vuln_scripts",
+    commandPattern: "nmap -p 445 --script=smb-double-pulsar-backdoor {target}",
+    description: "Probes SMB port for presence of NSA DoublePulsar kernel implant backdoor.",
+    whenToUse: "Incident response malware detection on compromised Windows hosts.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "High",
+    keywords: ["doublepulsar", "nsa backdoor", "smb implant"],
+    flagExplanations: { "--script=smb-double-pulsar-backdoor": "Sends SMB ping payload checking for DoublePulsar Ring0 implant." }
+  },
 
-  // ==================== 5. FIREWALL EVASION & DECOYS (15 COMMANDS) ====================
+  // ==================== 5. FIREWALL EVASION & DECOYS (12 COMMANDS) ====================
   {
     id: "cmd_evasion_no_ping",
     name: "Disable Ping Host Probe (No-Ping)",
@@ -684,8 +959,52 @@ export const NMAP_COMMANDS = [
     keywords: ["badsum", "invalid checksum", "firewall test"],
     flagExplanations: { "--badsum": "Generates intentionally corrupted checksums." }
   },
+  {
+    id: "cmd_evasion_ttl",
+    name: "Custom IP Time-To-Live (TTL) Setting",
+    category: "evasion",
+    commandPattern: "nmap --ttl 64 {timing} {target}",
+    description: "Sets custom IP Time-To-Live header value (e.g. 64 for Linux, 128 for Windows).",
+    whenToUse: "Evading OS detection by IDS rules relying on default TTL numbers.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["ttl", "custom ttl", "ip header"],
+    flagExplanations: { "--ttl 64": "Sets IP TTL field value to 64." }
+  },
+  {
+    id: "cmd_evasion_randomize_hosts",
+    name: "Randomize Target Host Order",
+    category: "evasion",
+    commandPattern: "nmap --randomize-hosts {timing} {target}",
+    description: "Shuffles list of target host IP addresses before scanning.",
+    whenToUse: "Evading threshold-based network anomaly detectors monitoring sequential IP scans.",
+    speedLevel: 4, stealthLevel: 4, riskLevel: "Low",
+    keywords: ["randomize hosts", "shuffle ips"],
+    flagExplanations: { "--randomize-hosts": "Scans hosts in random order." }
+  },
+  {
+    id: "cmd_evasion_spoof_ip",
+    name: "Source IP Address Spoofing",
+    category: "evasion",
+    commandPattern: "nmap -S 10.0.0.1 -e eth0 -Pn {target}",
+    description: "Sends probe packets with a completely spoofed source IP address.",
+    whenToUse: "Testing network intrusion detection logging capabilities.",
+    speedLevel: 3, stealthLevel: 5, riskLevel: "High",
+    keywords: ["spoof ip", "S flag", "source ip"],
+    flagExplanations: { "-S 10.0.0.1": "Sets spoofed source IP address." }
+  },
+  {
+    id: "cmd_evasion_proxies",
+    name: "HTTP/SOCKS4 Proxy Chain Probe",
+    category: "evasion",
+    commandPattern: "nmap --proxies socks4://127.0.0.1:9050 {timing} {target}",
+    description: "Relays scan connections through specified SOCKS4/HTTP proxy nodes.",
+    whenToUse: "Routing scan traffic securely over Tor network or jump proxies.",
+    speedLevel: 2, stealthLevel: 5, riskLevel: "Low",
+    keywords: ["proxies", "tor proxy", "socks4"],
+    flagExplanations: { "--proxies": "Relays TCP connection probes through SOCKS4/HTTP proxy." }
+  },
 
-  // ==================== 6. INDUSTRIAL SCADA/PLC, CLOUD & CONTAINERS (15 COMMANDS) ====================
+  // ==================== 6. INDUSTRIAL SCADA/PLC, CLOUD & CONTAINERS (10 COMMANDS) ====================
   {
     id: "cmd_scada_modbus",
     name: "Modbus TCP SCADA Protocol Audit",
@@ -773,5 +1092,27 @@ export const NMAP_COMMANDS = [
     speedLevel: 4, stealthLevel: 3, riskLevel: "High",
     keywords: ["redis", "port 6379", "redis rce", "noauth redis"],
     flagExplanations: { "--script=redis-info": "Fetches Redis CONFIG and INFO." }
+  },
+  {
+    id: "cmd_db_elasticsearch",
+    name: "Elasticsearch Unauthenticated Cluster Audit",
+    category: "advanced",
+    commandPattern: "nmap -p 9200 --script=http-title {target}",
+    description: "Audits Elasticsearch cluster REST API for unauthenticated data access.",
+    whenToUse: "Preventing database leaks on log analytics servers.",
+    speedLevel: 4, stealthLevel: 3, riskLevel: "High",
+    keywords: ["elasticsearch", "port 9200", "elk leak"],
+    flagExplanations: { "-p 9200": "Scans default Elasticsearch HTTP API port." }
+  },
+  {
+    id: "cmd_scada_ethernetip",
+    name: "EtherNet/IP Rockwell Automation Probe",
+    category: "advanced",
+    commandPattern: "nmap -p 44818 --script=enip-info {target}",
+    description: "Queries EtherNet/IP Industrial IP protocols on Allen-Bradley/Rockwell PLCs.",
+    whenToUse: "Industrial plant control system assessments.",
+    speedLevel: 3, stealthLevel: 4, riskLevel: "Medium",
+    keywords: ["ethernet/ip", "rockwell", "allen-bradley", "port 44818"],
+    flagExplanations: { "--script=enip-info": "Requests EtherNet/IP identity object data." }
   }
 ];
