@@ -1,6 +1,6 @@
 /**
  * Nmap Intelligence Search & Interactive Scan Builder
- * Main Application Orchestrator (English Interface)
+ * Main Application Orchestrator (1,000 Commands Dataset + Fast Pagination)
  */
 
 import { NMAP_COMMANDS } from './data/nmapCommands.js';
@@ -29,6 +29,10 @@ let currentCategory = "all";
 let currentQuery = "";
 let selectedSimulatorCmd = null;
 
+// Pagination State
+let currentPage = 1;
+const PAGE_SIZE = 24;
+
 // DOM Elements
 let searchInput, btnClearSearch, commandCardsGrid, resultsCount;
 
@@ -38,6 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCustomizerControls();
   setupSearchEvents();
   setupCategoryFilters();
+  setupPaginationControls();
   setupSimulatorModal();
   setupWizard();
   setupComparator();
@@ -125,6 +130,8 @@ function setupSearchEvents() {
 
   searchInput?.addEventListener("input", (e) => {
     currentQuery = e.target.value;
+    currentPage = 1;
+
     if (currentQuery.length > 0) {
       btnClearSearch.classList.remove("hidden");
     } else {
@@ -152,6 +159,7 @@ function setupSearchEvents() {
   btnClearSearch?.addEventListener("click", () => {
     searchInput.value = "";
     currentQuery = "";
+    currentPage = 1;
     btnClearSearch.classList.add("hidden");
     renderCommands();
   });
@@ -166,6 +174,7 @@ function setupSearchEvents() {
       const queryVal = tag.dataset.query;
       searchInput.value = queryVal;
       currentQuery = queryVal;
+      currentPage = 1;
       btnClearSearch.classList.remove("hidden");
       recentSearchMgr.addQuery(queryVal);
       renderRecentSearches();
@@ -197,6 +206,7 @@ function renderRecentSearches() {
       const q = tag.dataset.query;
       searchInput.value = q;
       currentQuery = q;
+      currentPage = 1;
       btnClearSearch.classList.remove("hidden");
       renderCommands();
     });
@@ -218,6 +228,7 @@ function setupCategoryFilters() {
       pill.classList.add("active", "bg-cyan-500/10", "text-cyan-400", "border-cyan-500/30");
 
       currentCategory = pill.dataset.cat;
+      currentPage = 1;
       renderCommands();
     });
   });
@@ -233,7 +244,31 @@ function updateCategoryCounts() {
   if (countFavorites) countFavorites.textContent = favoritesMgr.getFavoriteIds().length;
 }
 
-/* ==================== RENDER COMMAND CARDS ==================== */
+/* ==================== PAGINATION CONTROLS ==================== */
+function setupPaginationControls() {
+  const btnPrev = document.getElementById("btnPrevPage");
+  const btnNext = document.getElementById("btnNextPage");
+
+  btnPrev?.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderCommands();
+      scrollToCardsTop();
+    }
+  });
+
+  btnNext?.addEventListener("click", () => {
+    currentPage++;
+    renderCommands();
+    scrollToCardsTop();
+  });
+}
+
+function scrollToCardsTop() {
+  commandCardsGrid?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ==================== RENDER COMMAND CARDS (WITH PAGINATION) ==================== */
 function renderCommands() {
   if (!commandCardsGrid) return;
 
@@ -248,21 +283,31 @@ function renderCommands() {
     searchResults = searchResults.filter(item => item.command.category === currentCategory);
   }
 
-  // Update Count
-  if (resultsCount) resultsCount.textContent = searchResults.length;
+  const totalResults = searchResults.length;
+  if (resultsCount) resultsCount.textContent = totalResults;
 
-  if (searchResults.length === 0) {
+  if (totalResults === 0) {
     commandCardsGrid.innerHTML = `
-      <div class="col-span-full py-12 text-center bg-slate-900/40 rounded-2xl border border-slate-800 space-y-3">
+      <div class="col-span-full py-16 text-center bg-slate-900/40 rounded-3xl border border-slate-800 space-y-3">
         <i class="fa-solid fa-ghost text-4xl text-slate-600"></i>
-        <h3 class="font-bold text-slate-300">No Matching Commands Found</h3>
-        <p class="text-xs text-slate-500">Try modifying your search term or click one of the quick tags above.</p>
+        <h3 class="font-outfit font-bold text-slate-300 text-lg">No Matching Commands Found</h3>
+        <p class="text-xs text-slate-500">Try modifying your search query or select a different category pill above.</p>
       </div>
     `;
+    updatePaginationUI(0, 1, 1);
     return;
   }
 
-  commandCardsGrid.innerHTML = searchResults.map(({ command }) => {
+  // Calculate Pagination Slices
+  const totalPages = Math.ceil(totalResults / PAGE_SIZE);
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = Math.min(startIndex + PAGE_SIZE, totalResults);
+  const paginatedItems = searchResults.slice(startIndex, endIndex);
+
+  commandCardsGrid.innerHTML = paginatedItems.map(({ command }) => {
     const liveCmdStr = customizer.buildCustomCommand(command);
     const isFav = favoritesMgr.isFavorite(command.id);
 
@@ -281,7 +326,7 @@ function renderCommands() {
             </button>
           </div>
 
-          <h3 class="font-bold text-base text-slate-100 group-hover:text-cyan-400 transition">${escapeHtml(command.name)}</h3>
+          <h3 class="font-outfit font-bold text-base text-slate-100 group-hover:text-cyan-400 transition">${escapeHtml(command.name)}</h3>
           <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${escapeHtml(command.description)}</p>
         </div>
 
@@ -306,7 +351,30 @@ function renderCommands() {
     `;
   }).join('');
 
+  updatePaginationUI(totalResults, startIndex + 1, endIndex, totalPages);
   attachCardEvents();
+}
+
+function updatePaginationUI(totalResults, fromItem, toItem, totalPages = 1) {
+  const infoEl = document.getElementById("paginationInfo");
+  const btnPrev = document.getElementById("btnPrevPage");
+  const btnNext = document.getElementById("btnNextPage");
+  const numbersContainer = document.getElementById("pageNumbersContainer");
+
+  if (infoEl) {
+    infoEl.textContent = totalResults > 0 
+      ? `Showing ${fromItem.toLocaleString()}-${toItem.toLocaleString()} of ${totalResults.toLocaleString()} commands` 
+      : `No commands to display`;
+  }
+
+  if (btnPrev) btnPrev.disabled = (currentPage <= 1);
+  if (btnNext) btnNext.disabled = (currentPage >= totalPages);
+
+  if (numbersContainer) {
+    numbersContainer.innerHTML = `
+      <span class="px-3 py-1 bg-slate-800 rounded-lg text-cyan-400 font-bold border border-slate-700">Page ${currentPage} of ${totalPages}</span>
+    `;
+  }
 }
 
 function attachCardEvents() {
@@ -616,7 +684,7 @@ function openPingCheckModal() {
   const rec = document.getElementById("pingRecommendation");
 
   modal.classList.remove("hidden");
-  runPingSimulation(targetIpStr, container, badge, rec, "en");
+  runPingSimulation(targetIpStr, container, badge, rec);
 }
 
 /* ==================== HELPER FUNCTIONS ==================== */
@@ -627,7 +695,7 @@ function getCategoryLabel(cat) {
     case "service_os": return "Service & OS";
     case "vuln_scripts": return "Vulnerability (NSE)";
     case "evasion": return "Firewall Evasion";
-    case "advanced": return "Aggressive / Advanced";
+    case "advanced": return "Advanced & SCADA";
     default: return cat;
   }
 }

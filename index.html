@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nmap Intelligence & Interactive Scan Builder</title>
+  <title>Nmap Intelligence & Interactive Scan Builder (1,000 Commands)</title>
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,10 +12,15 @@
       darkMode: 'class',
       theme: {
         extend: {
+          fontFamily: {
+            outfit: ['Outfit', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            sans: ['Inter', 'sans-serif']
+          },
           colors: {
             cyber: {
-              bg: '#0b0f19',
-              card: '#111827',
+              bg: '#070a13',
+              card: '#0f172a',
               cyan: '#06b6d4',
               emerald: '#10b981',
               amber: '#f59e0b',
@@ -28,14 +33,17 @@
     }
   </script>
 
-  <!-- FontAwesome Icons & Custom CSS -->
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="./src/css/style.css">
 </head>
-<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-cyan-500/30 selection:text-cyan-300">
+<body class="bg-[#070a13] text-slate-100 min-h-screen flex flex-col antialiased selection:bg-cyan-500/30 selection:text-cyan-300 font-sans">
 
   <!-- ==================== HEADER BAR ==================== -->
-  <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80 shadow-lg">
+  <header class="sticky top-0 z-40 bg-slate-950/80 backdrop-blur-xl border-b border-slate-800/80 shadow-2xl">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Brand Logo -->
@@ -47,10 +55,10 @@
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-extrabold text-lg tracking-tight text-white font-mono">NMAP<span class="text-cyan-400">.INTEL</span></span>
-            <span class="px-2 py-0.5 text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full font-mono">v2.5 PRO</span>
+            <span class="font-outfit font-black text-xl tracking-tight text-white">NMAP<span class="text-cyan-400">.INTEL</span></span>
+            <span class="px-2 py-0.5 text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full font-mono">1,000 PRO</span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden sm:block">Intelligent Search Engine & Scan Simulator</p>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Intelligent Search Engine & Interactive Scan Simulator</p>
         </div>
       </div>
 
@@ -75,8 +83,8 @@
 
       <!-- Action Buttons & Controls -->
       <div class="flex items-center gap-2">
-        <button id="btnDisclaimerModal" class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-lg text-xs font-medium flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-triangle-exclamation"></i> <span class="hidden sm:inline" id="textBtnDisclaimer">Disclaimer</span>
+        <button id="btnDisclaimerModal" class="px-3.5 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition shadow-sm">
+          <i class="fa-solid fa-triangle-exclamation"></i> <span class="hidden sm:inline">Disclaimer</span>
         </button>
       </div>
 
@@ -99,22 +107,27 @@
     <div id="tab-search" class="tab-content space-y-8">
       
       <!-- HERO SEARCH BANNER -->
-      <div class="relative bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-2xl overflow-hidden">
-        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -left-10 -top-10 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 rounded-3xl p-6 sm:p-10 border border-slate-800/90 shadow-2xl overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-10 -top-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
         
         <div class="relative z-10 max-w-3xl space-y-4">
-          <div class="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-full text-xs font-mono font-medium" id="textHeroBadge">
-            <span class="w-2 h-2 rounded-full bg-cyan-400 live-indicator"></span>
-            Fuzzy Search Engine Active
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="inline-flex items-center gap-2 px-3 py-1 bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 rounded-full text-xs font-mono font-medium">
+              <span class="w-2 h-2 rounded-full bg-cyan-400 live-indicator"></span>
+              Fuzzy Search Engine Active
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-full text-xs font-mono font-medium">
+              <i class="fa-solid fa-database text-xs"></i> 1,000 Nmap Commands
+            </span>
           </div>
           
-          <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
-            Discover Nmap Commands With <span class="bg-gradient-to-r from-cyan-400 via-emerald-400 to-purple-400 bg-clip-text text-transparent">Smart Fuzzy Matching</span>
+          <h1 class="text-2xl sm:text-4xl font-outfit font-extrabold text-white tracking-tight leading-tight">
+            Discover 1,000 Nmap Commands With <span class="bg-gradient-to-r from-cyan-400 via-emerald-400 to-purple-400 bg-clip-text text-transparent">Smart Fuzzy Matching</span>
           </h1>
           
-          <p class="text-sm sm:text-base text-slate-400 leading-relaxed" id="textHeroDesc">
-            Even if you type typos or partial terms (e.g. <code class="text-cyan-400 font-mono">sny scn</code>, <code class="text-amber-400 font-mono">vuln script</code>, <code class="text-emerald-400 font-mono">pingless</code>, <code class="text-purple-400 font-mono">decoy</code>, <code class="text-rose-400 font-mono">eternalblue</code>), our engine instantly finds exact Nmap flags.
+          <p class="text-sm sm:text-base text-slate-400 leading-relaxed">
+            Instant search for security audit commands, flags, CVE scripts, evasion tricks, and SCADA probes. Even if you type typos (e.g. <code class="text-cyan-400 font-mono">sny scn</code>, <code class="text-amber-400 font-mono">vuln script</code>, <code class="text-emerald-400 font-mono">pingless</code>, <code class="text-purple-400 font-mono">decoy</code>, <code class="text-rose-400 font-mono">eternalblue</code>), our engine finds exact parameters.
           </p>
 
           <!-- SEARCH INPUT BAR -->
@@ -123,7 +136,7 @@
               <i class="fa-solid fa-magnifying-glass text-cyan-400 text-lg"></i>
             </div>
             <input type="text" id="searchInput" 
-              placeholder="Search command, flag, vulnerability or typo (e.g. syn scan, -sV, firewall bypass, eternalblue)..." 
+              placeholder="Search 1,000 commands, flags, CVEs or typos (e.g. syn scan, -sV, firewall bypass, eternalblue, log4j, docker)..." 
               class="w-full pl-12 pr-12 py-4 bg-slate-900/90 text-slate-100 placeholder-slate-500 rounded-2xl border-2 border-slate-800 focus:border-cyan-500 focus:outline-none focus:ring-4 focus:ring-cyan-500/10 text-sm sm:text-base transition font-sans shadow-xl">
             <button id="btnClearSearch" class="hidden absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300">
               <i class="fa-solid fa-circle-xmark text-lg"></i>
@@ -132,7 +145,7 @@
 
           <!-- Recent Searches History Bar -->
           <div id="recentSearchesBar" class="flex flex-wrap items-center gap-2 pt-2 text-xs">
-            <span class="text-slate-400 font-semibold flex items-center gap-1" id="textRecentLabel">
+            <span class="text-slate-400 font-semibold flex items-center gap-1">
               <i class="fa-solid fa-clock-rotate-left text-cyan-400"></i> Recent Searches:
             </span>
             <div id="recentTagsContainer" class="flex flex-wrap items-center gap-1.5">
@@ -145,13 +158,14 @@
 
           <!-- Quick Tag Suggestions -->
           <div class="flex flex-wrap items-center gap-2 text-xs">
-            <span class="text-slate-500 font-semibold" id="textQuickTagsLabel">Quick Tags:</span>
+            <span class="text-slate-500 font-semibold">Quick Tags:</span>
             <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-cyan-400 border border-slate-800 rounded-md transition font-mono" data-query="sny scn">sny scn</button>
             <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-amber-400 border border-slate-800 rounded-md transition font-mono" data-query="vuln script">vuln script</button>
             <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 rounded-md transition font-mono" data-query="pingless">pingless</button>
             <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-purple-400 border border-slate-800 rounded-md transition font-mono" data-query="decoy">decoy</button>
             <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-rose-400 border border-slate-800 rounded-md transition font-mono" data-query="eternalblue">eternalblue</button>
-            <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-teal-400 border border-slate-800 rounded-md transition font-mono" data-query="heartbleed">heartbleed</button>
+            <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-teal-400 border border-slate-800 rounded-md transition font-mono" data-query="log4j">log4j</button>
+            <button class="quick-tag px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-sky-400 border border-slate-800 rounded-md transition font-mono" data-query="docker">docker</button>
           </div>
         </div>
       </div>
@@ -164,8 +178,8 @@
               <i class="fa-solid fa-sliders text-sm"></i>
             </div>
             <div>
-              <h3 class="font-bold text-base text-slate-100" id="textCustomizerTitle">Live IP, Port & Flag Customizer</h3>
-              <p class="text-xs text-slate-400" id="textCustomizerSub">Target IP and port adjustments update across all generated commands in real time.</p>
+              <h3 class="font-outfit font-bold text-base text-slate-100">Live IP, Port & Flag Customizer</h3>
+              <p class="text-xs text-slate-400">Target IP and port adjustments update across all 1,000 commands in real time.</p>
             </div>
           </div>
 
@@ -190,7 +204,7 @@
           <!-- Target IP Input -->
           <div>
             <div class="flex items-center justify-between mb-1">
-              <label for="inputTargetIp" class="block font-semibold text-slate-300" id="textLabelTargetIp">
+              <label for="inputTargetIp" class="block font-semibold text-slate-300">
                 <i class="fa-solid fa-network-wired text-cyan-400 mr-1"></i> Target IP / Subnet:
               </label>
               <button id="btnPingCheck" class="text-[11px] font-mono text-cyan-400 hover:text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 px-2 py-0.5 rounded border border-cyan-500/20 flex items-center gap-1 transition">
@@ -203,7 +217,7 @@
 
           <!-- Port Range Input -->
           <div>
-            <label for="inputPorts" class="block font-semibold text-slate-300 mb-1" id="textLabelPorts">
+            <label for="inputPorts" class="block font-semibold text-slate-300 mb-1">
               <i class="fa-solid fa-ethernet text-amber-400 mr-1"></i> Port Range (e.g. 80,443 or 1-1000):
             </label>
             <input type="text" id="inputPorts" placeholder="Default top 1000 ports" 
@@ -212,7 +226,7 @@
 
           <!-- Timing Selector -->
           <div>
-            <label for="selectTiming" class="block font-semibold text-slate-300 mb-1" id="textLabelTiming">
+            <label for="selectTiming" class="block font-semibold text-slate-300 mb-1">
               <i class="fa-solid fa-gauge-high text-rose-400 mr-1"></i> Timing / Speed Template:
             </label>
             <select id="selectTiming" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-rose-400 font-mono text-xs focus:border-cyan-500 focus:outline-none">
@@ -228,7 +242,7 @@
 
         <!-- Quick Flag Toggles -->
         <div class="flex flex-wrap items-center gap-4 pt-2 text-xs border-t border-slate-800/60">
-          <span class="text-slate-400 font-semibold" id="textToggleExtraFlags">Toggle Extra Flags:</span>
+          <span class="text-slate-400 font-semibold">Toggle Extra Flags:</span>
           
           <label class="inline-flex items-center gap-2 cursor-pointer bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 hover:border-slate-700">
             <input type="checkbox" id="chkPn" class="rounded border-slate-700 text-cyan-500 focus:ring-cyan-500 bg-slate-900">
@@ -261,7 +275,7 @@
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex flex-wrap items-center gap-2" id="categoryFilters">
           <button data-cat="all" class="cat-pill active px-3.5 py-2 rounded-xl text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 transition">
-            All Commands (<span id="countAll">0</span>)
+            All Commands (<span id="countAll">1000</span>)
           </button>
           <button data-cat="discovery" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 transition">
             🔍 Host Discovery
@@ -278,6 +292,9 @@
           <button data-cat="evasion" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 transition">
             🥷 Firewall Evasion
           </button>
+          <button data-cat="advanced" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800 hover:text-slate-200 transition">
+            ⚡ Advanced & SCADA
+          </button>
           <button data-cat="favorites" class="cat-pill px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-amber-400 border border-slate-800 hover:border-amber-500/30 transition">
             ⭐ Bookmarks (<span id="countFavorites">0</span>)
           </button>
@@ -293,6 +310,25 @@
         <!-- Dynamic Cards Inserted Here via JS -->
       </div>
 
+      <!-- PAGINATION CONTROLS -->
+      <div id="paginationBar" class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-2xl border border-slate-800 text-xs">
+        <span class="text-slate-400 font-mono" id="paginationInfo">Showing 1-24 of 1,000 commands</span>
+
+        <div class="flex items-center gap-2">
+          <button id="btnPrevPage" disabled class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 rounded-xl font-semibold transition">
+            <i class="fa-solid fa-chevron-left mr-1"></i> Prev
+          </button>
+          
+          <div id="pageNumbersContainer" class="flex items-center gap-1 font-mono">
+            <!-- Dynamically populated page buttons -->
+          </div>
+
+          <button id="btnNextPage" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-40 disabled:cursor-not-allowed text-slate-200 rounded-xl font-semibold transition">
+            Next <i class="fa-solid fa-chevron-right ml-1"></i>
+          </button>
+        </div>
+      </div>
+
     </div>
 
     <!-- TAB 2: SCENARIO WIZARD -->
@@ -301,11 +337,11 @@
         
         <!-- Wizard Title -->
         <div class="text-center max-w-2xl mx-auto space-y-2">
-          <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-mono font-medium" id="textWizBadge">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-full text-xs font-mono font-medium">
             <i class="fa-solid fa-wand-magic-sparkles"></i> Step-by-Step Guided Assistant
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textWizTitle">Scenario-Based Command Wizard</h2>
-          <p class="text-slate-400 text-sm" id="textWizSub">Select your objective step by step; the intelligent engine will build optimized Nmap flags for your target.</p>
+          <h2 class="text-2xl sm:text-3xl font-outfit font-extrabold text-white">Scenario-Based Command Wizard</h2>
+          <p class="text-slate-400 text-sm">Select your objective step by step; the intelligent engine will build optimized Nmap flags for your target.</p>
         </div>
 
         <!-- Wizard Progress Bar -->
@@ -453,18 +489,18 @@
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-400 rounded-full text-xs font-mono font-medium">
             <i class="fa-solid fa-code-compare"></i> Side-by-Side Comparison
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textCompTitle">Command Comparison Analysis</h2>
-          <p class="text-slate-400 text-sm" id="textCompSub">Side-by-side comparison of stealth rating, scan speed, risk level, and target scenario fit.</p>
+          <h2 class="text-2xl sm:text-3xl font-outfit font-extrabold text-white">Command Comparison Analysis</h2>
+          <p class="text-slate-400 text-sm">Select any 2 of 1,000 commands for side-by-side comparison of stealth rating, scan speed, risk level, and target scenario fit.</p>
         </div>
 
         <!-- Select Selectors -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs max-w-4xl mx-auto">
           <div>
-            <label for="selectCmdA" class="block font-semibold text-cyan-400 mb-1" id="textCompCmdA">Select Command A:</label>
+            <label for="selectCmdA" class="block font-semibold text-cyan-400 mb-1">Select Command A:</label>
             <select id="selectCmdA" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 font-mono text-xs focus:border-cyan-500 focus:outline-none"></select>
           </div>
           <div>
-            <label for="selectCmdB" class="block font-semibold text-purple-400 mb-1" id="textCompCmdB">Select Command B:</label>
+            <label for="selectCmdB" class="block font-semibold text-purple-400 mb-1">Select Command B:</label>
             <select id="selectCmdB" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-slate-200 font-mono text-xs focus:border-purple-500 focus:outline-none"></select>
           </div>
         </div>
@@ -483,8 +519,8 @@
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full text-xs font-mono font-medium">
             <i class="fa-solid fa-table-list"></i> Reference Table
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textCsTitle">Interactive Nmap Cheat-Sheet</h2>
-          <p class="text-slate-400 text-sm" id="textCsSub">Comprehensive reference table of core Nmap command switches and parameters.</p>
+          <h2 class="text-2xl sm:text-3xl font-outfit font-extrabold text-white">Interactive Nmap Cheat-Sheet</h2>
+          <p class="text-slate-400 text-sm">Comprehensive reference table of core Nmap command switches and parameters.</p>
         </div>
 
         <!-- Table Container -->
@@ -492,11 +528,11 @@
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-950 text-slate-400 uppercase font-mono font-bold border-b border-slate-800">
               <tr>
-                <th class="p-3.5" id="textCsColFlag">Flag</th>
-                <th class="p-3.5" id="textCsColNameCat">Name & Category</th>
-                <th class="p-3.5" id="textCsColDesc">Description</th>
-                <th class="p-3.5" id="textCsColExample">Example Syntax</th>
-                <th class="p-3.5" id="textCsColImpact">Network Impact</th>
+                <th class="p-3.5">Flag</th>
+                <th class="p-3.5">Name & Category</th>
+                <th class="p-3.5">Description</th>
+                <th class="p-3.5">Example Syntax</th>
+                <th class="p-3.5">Network Impact</th>
               </tr>
             </thead>
             <tbody id="cheatSheetTableBody" class="divide-y divide-slate-800/60">
@@ -516,8 +552,8 @@
           <div class="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-full text-xs font-mono font-medium">
             <i class="fa-solid fa-gauge-high"></i> Timing Templates (-T0 .. -T5)
           </div>
-          <h2 class="text-2xl sm:text-3xl font-extrabold text-white" id="textTimingTitle">Nmap Timing Guide</h2>
-          <p class="text-slate-400 text-sm" id="textTimingSub">Packet delay pacing, RTT timeout, and IDS alert sensitivity details.</p>
+          <h2 class="text-2xl sm:text-3xl font-outfit font-extrabold text-white">Nmap Timing Guide</h2>
+          <p class="text-slate-400 text-sm">Packet delay pacing, RTT timeout, and IDS alert sensitivity details.</p>
         </div>
 
         <div id="timingCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -531,7 +567,7 @@
     <section class="bg-slate-900/40 rounded-3xl p-6 sm:p-8 border border-slate-800 space-y-4">
       <div class="flex items-center gap-3">
         <i class="fa-solid fa-book-bookmark text-cyan-400 text-lg"></i>
-        <h3 class="font-extrabold text-lg text-white" id="textBibTitle">Official Bibliography & Technical References</h3>
+        <h3 class="font-outfit font-extrabold text-lg text-white">Official Bibliography & Technical References</h3>
       </div>
       <div id="bibliographyContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- JS Populated -->
@@ -553,7 +589,7 @@
     <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6 space-y-6">
       <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <div>
-          <h3 id="simModalTitle" class="text-xl font-extrabold text-white">Command Title</h3>
+          <h3 id="simModalTitle" class="text-xl font-outfit font-extrabold text-white">Command Title</h3>
           <span id="simModalCategory" class="text-xs text-cyan-400 font-mono">Category: Host Discovery</span>
         </div>
         <button id="btnCloseSimulator" class="p-2 text-slate-400 hover:text-slate-200">
@@ -579,7 +615,7 @@
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-bolt text-amber-400"></i>
-          <h3 class="font-bold text-white text-base">Target Liveness & Ping Check Simulator</h3>
+          <h3 class="font-outfit font-bold text-white text-base">Target Liveness & Ping Check Simulator</h3>
         </div>
         <button id="btnClosePingCheck" class="text-slate-400 hover:text-slate-200">
           <i class="fa-solid fa-xmark"></i>
@@ -603,7 +639,7 @@
     <div class="bg-slate-950 border border-slate-800 rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl">
       <div class="flex items-center gap-3 text-rose-400">
         <i class="fa-solid fa-shield-cat text-2xl"></i>
-        <h3 class="font-extrabold text-lg text-white" id="textDisclaimerTitle">Legal & Ethical Disclaimer</h3>
+        <h3 class="font-outfit font-extrabold text-lg text-white">Legal & Ethical Disclaimer</h3>
       </div>
 
       <p class="text-xs text-slate-300 leading-relaxed">
@@ -611,7 +647,7 @@
       </p>
 
       <div class="pt-2 flex justify-end">
-        <button id="btnConfirmDisclaimer" class="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded-xl text-xs transition" id="textDisclaimerBtn">
+        <button id="btnConfirmDisclaimer" class="px-4 py-2 bg-rose-500 hover:bg-rose-400 text-slate-950 font-bold rounded-xl text-xs transition">
           I Understand & Accept Terms
         </button>
       </div>
